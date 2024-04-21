@@ -1,0 +1,22 @@
+{% extends 'root.html' %}
+{% block content %}
+    <p>Main Page of my blog site</p>
+    <p>takes time to fill it</p>
+    <h2>
+        Список пользователей
+    </h2>
+    <ul>
+        {% if user_list.count > 0 %}
+            {% for user in user_list %}
+                <li>{{ user.username }}</li>
+
+                </tr>
+            {% endfor %}
+        {% else %}
+            <tr>
+                <td>Пользователей нет</td>
+            </tr>
+        {% endif %}
+
+    </ul>
+{% endblock %}

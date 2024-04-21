@@ -1,0 +1,13 @@
+{% extends '../root.html' %}
+{% block content %}
+
+    <div class="card" style="width: 30rem;">
+        <div class="card-body">
+            <h5 class="card-title">{{ object.title }}</h5>
+            <p class="card-text">By {{ post.user }}</p>
+            <p class="card-text">{{ post.body }}</p>
+            <a href="/posts/" class="card-link">back</a>
+        </div>
+    </div>
+
+{% endblock %}
