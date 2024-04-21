@@ -51,6 +51,7 @@ def make_unique_slug(title):
             print('last_slug_list ', last_slug_list)
             num = int(last_slug_list.pop()) + 1
             last_slug_list.append(str(num))
+
             result = "-".join(last_slug_list)
 
     else:
