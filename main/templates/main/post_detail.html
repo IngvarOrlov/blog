@@ -1,13 +1,39 @@
 {% extends '../root.html' %}
+{% block title %}
+    <title>{{ post.title.title }}</title>
+{% endblock %}
 {% block content %}
 
     <div class="card" style="width: 30rem;">
         <div class="card-body">
-            <h5 class="card-title">{{ object.title }}</h5>
-            <p class="card-text">By {{ post.user }}</p>
+            <h5 class="card-title">{{ post.title }}</h5>
+            <p class="card-text">By {{ post.author }}</p>
             <p class="card-text">{{ post.body }}</p>
             <a href="/posts/" class="card-link">back</a>
+            {% if user == post.author %}
+                <a href={% url 'updatepost' slug=post.slug %} class="card-link">edit</a>
+            {% endif %}
         </div>
     </div>
 
+
+    {% with comments.count as total_comments %}
+        <h4>
+            {{ total_comments }} comment{{ total_comments|pluralize }}
+        </h4>
+    {% endwith %}
+
+    {% for comment in comments %}
+        <div class="comment">
+            <p class="info">
+                Comment {{ forloop.counter }} by {{ comment.name }}
+                {{ comment.created }}
+            </p>
+            {{ comment.body|linebreaks }}
+        </div>
+    {% empty %}
+        <p>There are no comments.</p>
+    {% endfor %}
+
+    {% include "main/comment_form.html" %}
 {% endblock %}

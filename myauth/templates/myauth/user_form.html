@@ -1,5 +1,7 @@
 {% extends 'root.html' %}
-
+{% block title %}
+    <title>Регистрация</title>
+{% endblock %}
 {% block content %}
     <form method="post">
         {% csrf_token %}

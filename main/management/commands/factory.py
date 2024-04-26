@@ -5,6 +5,8 @@ import factory
 from factory.fuzzy import FuzzyInteger
 
 from main.models import *
+from main.slug import make_unique_slug
+
 
 class Command(BaseCommand):
     help = "Learn factory boy"
@@ -22,22 +24,27 @@ class Command(BaseCommand):
             class Meta:
                 model = Post
 
+            def __init__(self, author):
+                self.author = author
+
             title = factory.Faker('text', max_nb_chars=15)
             body = factory.Faker('paragraph')
-            author=factory.SubFactory(UserFactory)
-            slug = factory.Faker('slug')
-        #     age = FuzzyInteger(1, 10)
+            # author=factory.SubFactory(UserFactory)
+            # author = self.author
+            # slug = factory.Faker('slug')
 
+        #     age = FuzzyInteger(1, 10)
 
         # animal_1.kind_id
         # animal_1.kind
         # animal_1 = AnimalFactory.build()
         # animal_1 =animal_1 AnimalFactory.create(name='Abcde')
         # post = PostFactory.build()
-        post = PostFactory.create_batch(2)
-        # print(vars(post))
 
-        # # animals = AnimalFactory.build_batch(3)
-        # animals = AnimalFactory.create_batch(3)
-        # for animal in animals:
-        #     print(vars(animal))
+        # post = PostFactory.create_batch(2)
+        author = UserFactory.create()
+        for _ in range(2):
+            post = PostFactory.build(author=author)
+            slug = str(post.title)
+            post.slug = make_unique_slug(slug)
+            post.save()

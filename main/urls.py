@@ -1,16 +1,18 @@
 from django.contrib import admin
-from django.urls import path, include
 from django.views.generic import TemplateView
+from django.urls import path
 
-from .views import posts, index, addpost, show_post, PostDetailView, PostListView
+from main import views
 
 urlpatterns = [
-    # path('posts/', posts, name='posts'),
-    path('posts/', PostListView.as_view(), name='posts'),
+    path('posts/', views.posts, name='posts'),
+    # path('posts/', views.PostListView.as_view(), name='posts'),
 
-    path('', index, name='index'),
-    path('posts/add_new/', addpost, name='addpost'),
-    # path('posts/<int:id>', show_post, name='showpost'),
-    path('post/<int:pk>/', PostDetailView.as_view(), name='PostDetailView'),
+    path('', views.index, name='index'),
+    path('posts/add_new/', views.addpost, name='addpost'),
+    path('posts/<slug:slug>', views.show_post, name='showpost'),
+    path('posts/<slug:slug>/edit', views.update_post, name='updatepost'),
+    path('posts/<slug:slug>/', views.post_comment, name='post_comment'),
+    # path('post/<int:pk>/', views.PostDetailView.as_view(), name='PostDetailView'),
 
 ]
