@@ -2,6 +2,7 @@ from django.urls import reverse
 from django.utils import timezone
 from myauth.models import User
 from django.db import models
+from taggit.managers import TaggableManager
 
 
 # class User(models.Model):
@@ -36,7 +37,7 @@ class Post(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Время создания")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Время обновления")
     status = models.CharField(max_length=2, choices=Status.choices, default=Status.DRAFT)
-
+    tags = TaggableManager()
     def __str__(self):
         return self.title
 
@@ -66,3 +67,4 @@ class Comment(models.Model):
 
     def __str__(self):
         return f'Comment by {self.name} on {self.post}'
+

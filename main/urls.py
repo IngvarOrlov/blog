@@ -6,6 +6,7 @@ from main import views
 
 urlpatterns = [
     path('posts/', views.posts, name='posts'),
+    path('posts/back/', views.back_to_posts, name='back_to_posts'),
     # path('posts/', views.PostListView.as_view(), name='posts'),
 
     path('', views.index, name='index'),

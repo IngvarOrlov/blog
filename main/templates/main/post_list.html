@@ -7,13 +7,14 @@
 
 
         <div class="card m-2 border-0" style="width: 30rem;">
-            <div class="card-body post" >
+            <div class="card-body post">
                 <h5 class="card-title post-title">{{ post.title }}</h5>
+                <p class="tags">Tags: {{ post.tags.all|join:", " }}</p>
                 <p class="date">опубликовано {{ post.created_at }} by {{ post.author }}</p>
                 <p>{{ post.body| slice:':70' }}...
-                <a href={% url 'showpost' slug=post.slug %}>читать далее</a>
-                    </p>
-{#                <a href='{{ post.get_absolute_url }}'>show</a>#}
+                    <a href={% url 'showpost' slug=post.slug %}>читать далее</a>
+                </p>
+                {#                <a href='{{ post.get_absolute_url }}'>show</a>#}
             </div>
         </div>
 

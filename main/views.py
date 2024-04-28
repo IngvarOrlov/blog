@@ -3,12 +3,13 @@ import re
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.forms import model_to_dict
-from django.http import HttpResponseNotFound, HttpResponseNotAllowed
+from django.http import HttpResponseNotFound, HttpResponseNotAllowed, HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import DetailView, ListView
 from django.contrib import messages
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.decorators.http import require_POST
+from taggit.models import Tag
 
 from .models import Post, User
 from .forms import PostForm, CommentForm
@@ -20,14 +21,28 @@ from .slug import make_unique_slug
 def posts(request):
     post_list = Post.objects.select_related("author").all()
     paginator = Paginator(post_list, 5)
+    # print()
     page_number = request.GET.get('page', 1)
+    # if redirect: pull page from cookie
+    if request.COOKIES.get('redirect'):
+        page_number = request.COOKIES.get('back_page')
     try:
         posts = paginator.page(page_number)
     except EmptyPage:
         posts = paginator.page(paginator.num_pages)
     except PageNotAnInteger:
         posts = paginator.page(1)
-    return render(request, 'main/post_list.html', {"object_list": posts})
+    html = render(request, 'main/post_list.html', {"object_list": posts})
+    html.set_cookie('back_page', page_number)
+    if request.COOKIES.get('redirect'):
+        html.delete_cookie('redirect')
+    return html
+
+
+def back_to_posts(request):
+    html = redirect('posts')
+    html.set_cookie('redirect', 'True')
+    return html
 
 
 def index(request):
@@ -62,9 +77,10 @@ def show_post(request, slug):
         post = Post.objects.select_related("author").get(slug=slug)
         comments = post.comments.filter(active=True)
         form = CommentForm()
-        return render(request,
+        html = render(request,
                       'main/post_detail.html',
                       {'post': post, 'form': form, 'comments': comments})
+        return html
     except Post.DoesNotExist:
         return HttpResponseNotFound('<h2>Post not found</h2>')
 
@@ -113,10 +129,6 @@ def post_comment(request, slug):
         messages.success(request, 'Комментарий создан успешно')
     else:
         messages.error(request, 'ой, ошибка!')
-    # return render(request, 'main/comment.html',
-    #               {'post': post,
-    #                'form': form,
-    #                'comment': comment})
     comments = post.comments.filter(active=True)
     form = CommentForm()
     return render(request,

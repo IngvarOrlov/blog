@@ -9,7 +9,7 @@
             <h5 class="card-title">{{ post.title }}</h5>
             <p class="card-text">By {{ post.author }}</p>
             <p class="card-text">{{ post.body }}</p>
-            <a href="/posts/" class="card-link">back</a>
+            <a href="{% url 'back_to_posts' %} " class="card-link">back</a>
             {% if user == post.author %}
                 <a href={% url 'updatepost' slug=post.slug %} class="card-link">edit</a>
             {% endif %}
