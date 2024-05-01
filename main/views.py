@@ -9,6 +9,7 @@ from django.views.generic import DetailView, ListView
 from django.contrib import messages
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.decorators.http import require_POST
+from django.db.models import Count
 from taggit.models import Tag
 
 from .models import Post, User
@@ -18,10 +19,14 @@ from .slug import make_unique_slug
 
 # Create your views here.
 
-def posts(request):
-    post_list = Post.objects.select_related("author").all()
+def posts(request, tag_slug=None):
+    post_list = Post.objects.select_related("author").filter(status='PB')
+    tag = None
+    if tag_slug:
+        tag = get_object_or_404(Tag, slug=tag_slug)
+        post_list = post_list.filter(tags__in=[tag])
+
     paginator = Paginator(post_list, 5)
-    # print()
     page_number = request.GET.get('page', 1)
     # if redirect: pull page from cookie
     if request.COOKIES.get('redirect'):
@@ -32,7 +37,7 @@ def posts(request):
         posts = paginator.page(paginator.num_pages)
     except PageNotAnInteger:
         posts = paginator.page(1)
-    html = render(request, 'main/post_list.html', {"object_list": posts})
+    html = render(request, 'main/post_list.html', {"object_list": posts, 'tag': tag})
     html.set_cookie('back_page', page_number)
     if request.COOKIES.get('redirect'):
         html.delete_cookie('redirect')
@@ -61,14 +66,18 @@ def addpost(request):
     user_id = request.session.get('_auth_user_id')
     user = User.objects.get(id=user_id)
     slug = make_unique_slug(request.POST.get('title'))
-
-    Post.objects.create(
+    tag_list = str(request.POST.get('tags')).split(',')
+    # print(tag_list)
+    post = Post.objects.create(
         title=request.POST.get('title'),
         body=request.POST.get('body'),
         author=user,
         slug=slug
     )
-    messages.success(request, "Post successfully added")
+    for tag in tag_list:
+        post.tags.add(tag.strip())
+
+    messages.success(request, "Пост успешно добавлен")
     return redirect('posts')
 
 
@@ -77,9 +86,16 @@ def show_post(request, slug):
         post = Post.objects.select_related("author").get(slug=slug)
         comments = post.comments.filter(active=True)
         form = CommentForm()
+        # Список схожих постов
+        post_tags_ids = post.tags.values_list('id', flat=True)
+        similar_posts = Post.objects.filter(tags__in=post_tags_ids, status='PB').exclude(id=post.id)
+        similar_posts = similar_posts.annotate(same_tags=Count('title')).order_by('-same_tags', '-publish')[:4]
         html = render(request,
                       'main/post_detail.html',
-                      {'post': post, 'form': form, 'comments': comments})
+                      {'post': post,
+                       'form': form,
+                       'comments': comments,
+                       'similar_posts': similar_posts})
         return html
     except Post.DoesNotExist:
         return HttpResponseNotFound('<h2>Post not found</h2>')
@@ -94,13 +110,17 @@ def update_post(request, slug):
         if post.author_id != request.user.id:
             return redirect('index')
         if request.method == 'GET':
-            form = PostForm(model_to_dict(post))
+            dict_model=model_to_dict(post)
+            tags = [tag.name for tag in post.tags.all()]
+            tags = ', '.join(tags)
+            dict_model['tags']=tags
+            form = PostForm(dict_model)
             return render(request, 'main/post_update.html', {'form': form})
         # POST
         post.title = request.POST.get('title')
         post.body = request.POST.get('body')
         post.save()
-        messages.success(request, 'Post succesfully edited!')
+        messages.success(request, 'Пост успешно изменен')
         return render(request, 'main/post_detail.html', {'post': post})
     except Post.DoesNotExist:
         return HttpResponseNotFound('<h2>Post not found</h2>')

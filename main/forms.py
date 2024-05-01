@@ -20,11 +20,15 @@ from .models import Comment, Post
 class PostForm(forms.ModelForm):
     class Meta:
         model = Post
-        fields = ['title','body']
+        fields = ['title','tags','body']
+        labels = {'tags': 'Тэги'}
+        help_texts={'tags': ""}
 
         widgets = {
             "title": forms.TextInput(attrs={'class': "form-control"}),
             "body": forms.Textarea(attrs={'class': "form-control"}),
+            "tags": forms.TextInput(attrs={'class': "form-control",'placeholder': 'через запятую'}),
+
         }
 
 

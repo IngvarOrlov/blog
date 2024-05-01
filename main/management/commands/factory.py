@@ -29,6 +29,7 @@ class Command(BaseCommand):
 
             title = factory.Faker('text', max_nb_chars=15)
             body = factory.Faker('paragraph')
+            # tags = factory.Faker('word')
             # author=factory.SubFactory(UserFactory)
             # author = self.author
             # slug = factory.Faker('slug')
@@ -48,3 +49,4 @@ class Command(BaseCommand):
             slug = str(post.title)
             post.slug = make_unique_slug(slug)
             post.save()
+            # post.tags.add(post.tag)
