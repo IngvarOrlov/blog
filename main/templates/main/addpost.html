@@ -1,6 +1,10 @@
 {% extends '../root.html' %}
+{% block title %}
+    <title>Новый пост</title>
+{% endblock %}
 {% block content %}
-    <h3 class="text">New Post</h3>
+    <div class="mt-sm-2" >
+    <h4 class="text">New Post</h4>
     <form method="POST">
             {% csrf_token %}
             <table>
@@ -9,5 +13,5 @@
 {#            <button type="submit" value="Send" class="btn btn-primary">Submit</button>#}
             <input type="submit" value="Сохранить" class="btn btn-outline-secondary mt-4">
         </form>
-
+    </div>
 {% endblock %}

@@ -1,0 +1,95 @@
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+
+<nav class="navbar navbar-expand-sm bg-body-tertiary">
+    <div class="container-fluid ">
+        <a class="navbar-brand" href="/">Blog</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+
+                <li class="nav-item">
+                    <a class="nav-link
+                    {% if request.path == '/' %}
+                    active
+                    {% endif %}
+                        " aria-current="page" href="/">Home</a>
+                </li>
+
+
+                <li class="nav-item">
+                    <a class="nav-link
+                    {% if request.path == '/posts/' %}
+                    active
+                    {% endif %}
+                        " href="{% url 'posts' %}">Posts</a>
+                </li>
+
+            
+                {% if user.is_authenticated %}
+                    
+                    <li class="nav-item">
+                        <a class="nav-link
+                    {% if request.path == "/posts/add_new/" %}
+                    active
+                    {% endif %}
+                        " href="/posts/add_new/">Add post</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <form action="{% url 'logout' %}" method="post" id="secretKey">
+                            {% csrf_token %}
+                            <input type="hidden" name="key1" value="value1"/>
+                        </form>
+                        <a class="nav-link" href="#"
+                           onclick="document.getElementById('secretKey').submit();">
+                            Logout</a>
+                    </li>
+
+
+                {% else %}
+
+                    <li class="nav-item">
+                        <a class="nav-link
+                        {% if request.path == '/login/' %}
+                        active
+                        {% endif %}
+                            " href="{% url 'login' %}">Login</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link
+                        {% if request.path == '/register/' %}
+                        active
+                        {% endif %}
+                            " href="{% url 'register' %}">register</a>
+                    </li>
+                {% endif %}
+
+            </ul>
+          <form class="d-flex" role="search" method="get" action="{% url 'posts_search'%}">
+        <input class="form-control me-2" 
+               type="search" 
+               placeholder="Поиск" a
+               ria-label="Search" 
+               name="query" 
+               {% if query %}
+                   value={{ query }}
+               {% endif %}
+        >
+        <button class="btn btn-outline-success" type="submit">Поиск</button>
+      </form>
+
+        </div>
+    </div>
+</nav>
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">{{ message | safe }}</div>
+    {% endfor %}
+{% endif %}

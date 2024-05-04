@@ -1,0 +1,15 @@
+{% load main_tags %}
+<p class="card-body">
+    Вами опубликовано <b>{% total_posts %}</b> постов.
+</p>
+
+<h5 class="card-body">Последние публикации</h5>
+{% show_latest_posts 4 %}
+
+<h5 class="card-body">Самые популярные</h5>
+<ul>
+    {% get_most_commented_posts 3  as most_commented_post %}
+    {% for post in most_commented_post %}
+        <li><a href="{{ post.get_absolute_url }}"> {{ post.title }}</a></li>
+    {% endfor %}
+</ul>

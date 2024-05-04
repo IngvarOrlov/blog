@@ -11,9 +11,10 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.decorators.http import require_POST
 from django.db.models import Count
 from taggit.models import Tag
+from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank, TrigramSimilarity
 
 from .models import Post, User
-from .forms import PostForm, CommentForm
+from .forms import PostForm, CommentForm, SearchForm
 from .slug import make_unique_slug
 
 
@@ -110,10 +111,10 @@ def update_post(request, slug):
         if post.author_id != request.user.id:
             return redirect('index')
         if request.method == 'GET':
-            dict_model=model_to_dict(post)
+            dict_model = model_to_dict(post)
             tags = [tag.name for tag in post.tags.all()]
             tags = ', '.join(tags)
-            dict_model['tags']=tags
+            dict_model['tags'] = tags
             form = PostForm(dict_model)
             return render(request, 'main/post_update.html', {'form': form})
         # POST
@@ -154,3 +155,29 @@ def post_comment(request, slug):
     return render(request,
                   'main/post_detail.html',
                   {'post': post, 'form': form, 'comments': comments})
+
+
+def posts_search(request):
+    form = SearchForm()
+    query = None
+    results = []
+
+    if request.method == 'GET':
+        form = SearchForm(request.GET)
+        if form.is_valid():
+            query = form.cleaned_data['query']
+            search_vector = SearchVector('title', weight='A') + SearchVector('body', weight='B')
+            search_query = SearchQuery(query)
+            results = Post.objects.filter(status='PB').annotate(
+                similarity=TrigramSimilarity('title', query),
+            ).filter(similarity__gt=0.1).order_by('-similarity')
+            if not results:
+                results = Post.objects.filter(status='PB').annotate(
+                    rank=SearchRank(search_vector, search_query)).filter(rank__gte=0.3).order_by('-rank')
+                print(results)
+
+    return render(request,
+                  'main/search.html',
+                  {'form': form,
+                   'query': query,
+                   'object_list': results})
