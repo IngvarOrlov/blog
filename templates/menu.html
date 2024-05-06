@@ -67,7 +67,7 @@
                         {% if request.path == '/register/' %}
                         active
                         {% endif %}
-                            " href="{% url 'register' %}">register</a>
+                            " href="{% url 'register' %}">Register</a>
                     </li>
                 {% endif %}
 
@@ -75,8 +75,8 @@
           <form class="d-flex" role="search" method="get" action="{% url 'posts_search'%}">
         <input class="form-control me-2" 
                type="search" 
-               placeholder="Поиск" a
-               ria-label="Search" 
+               placeholder="Поиск" 
+               aria-label="Search" 
                name="query" 
                {% if query %}
                    value={{ query }}

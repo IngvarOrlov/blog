@@ -116,7 +116,7 @@ def update_post(request, slug):
             tags = ', '.join(tags)
             dict_model['tags'] = tags
             form = PostForm(dict_model)
-            return render(request, 'main/post_update.html', {'form': form})
+            return render(request, 'main/post_update.html', {'form': form, 'post':post})
         # POST
         post.title = request.POST.get('title')
         post.body = request.POST.get('body')
@@ -126,6 +126,17 @@ def update_post(request, slug):
     except Post.DoesNotExist:
         return HttpResponseNotFound('<h2>Post not found</h2>')
 
+@login_required
+def delete_post(request, slug):
+    try:
+        post = Post.objects.get(slug=slug)
+        if post.author_id != request.user.id:
+            return redirect('index')
+        post.delete()
+        messages.success(request, 'Пост успешно удален')
+        return redirect('posts')
+    except Post.DoesNotExist:
+        return HttpResponseNotFound('<h2>Post not found</h2>')
 
 class PostDetailView(LoginRequiredMixin, DetailView):
     model = Post
