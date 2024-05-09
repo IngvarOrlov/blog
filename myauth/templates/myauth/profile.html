@@ -1,8 +1,53 @@
 {% extends 'root.html' %}
-{% block title %}Profile Page{% endblock title %}
+
+{% block title %}
+    <title>Профиль {{ user.username }}</title>
+{% endblock title%}
+
 {% block content %}
-    <div>
-        <h1>This is the profile page for {{user.username}}</h1>
+    <div class="mb-3">
+        <img src="{{ user.profile.avatar.url }} " style="cursor: pointer;"/>
+    </div>
+    {% if user_form.errors %}
+        <div role="alert">
+            <div>
+                {% for key, value in user_form.errors.items %}
+                    <strong>{{ value }}</strong>
+                {% endfor %}
+            </div>
+            <button type="button" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    {% endif %}
+    <div class="form-content">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div>
+                <div>
+                    <div>
+                        <label>Имя:</label>
+                        {{ user_form.username }}
+                        <hr>
+                        <label>Email:</label>
+                        {{ user_form.email }}
+                    </div>
+                    <hr>
+                    <div><a href="{% url 'password_change' %}">Изменить пароль</a>
+                        <hr>
+                        <label>Изменить аватар:</label>
+{#                        {{ profile_form.avatar }}#}
+                        <input type="file" value="Browse" name="avatar" id="id_avatar" />
+                    </div>
+                    
+                    <hr>
+                    <label>О себе:</label> {{ profile_form.bio }}
+                </div>
+            </div>
+            <br><br>
+            <button class="btn btn-secondary" type="submit">Сохранить</button>
+{#            <button class="btn btn-secondary" type="reset">Сбросить</button>#}
+        </form>
     </div>
 
 {% endblock content %}

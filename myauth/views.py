@@ -6,8 +6,9 @@ from django.views.generic import CreateView
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib import messages
+from django.contrib.auth.views import PasswordChangeView
 
-from myauth.forms import MyUserCreateForm, LoginForm
+from myauth.forms import MyUserCreateForm, LoginForm, UpdateUserForm, UpdateProfileForm
 from myauth.models import User
 
 
@@ -21,6 +22,7 @@ class MyUserCreateView(CreateView):
         if request.user.is_authenticated:
             return redirect(to='/')
         return super(MyUserCreateView, self).dispatch(request, *args, **kwargs)
+
 
 class Login(SuccessMessageMixin, LoginView):
     form_class = LoginForm
@@ -38,6 +40,7 @@ class Login(SuccessMessageMixin, LoginView):
             return redirect(to='/')
         return super(Login, self).dispatch(request, *args, **kwargs)
 
+
 class Logout(SuccessMessageMixin, LogoutView):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -50,4 +53,23 @@ class Logout(SuccessMessageMixin, LogoutView):
 
 @login_required
 def profile(request):
-    return render(request, 'myauth/profile.html')
+    if request.method == 'POST':
+        user_form = UpdateUserForm(request.POST, instance=request.user)
+        profile_form = UpdateProfileForm(request.POST, request.FILES, instance=request.user.profile)
+
+        if user_form.is_valid() and profile_form.is_valid():
+            user_form.save()
+            profile_form.save()
+            messages.success(request, 'Ваш профиль успешно изменен')
+            return redirect(to='profile')
+    else:
+        user_form = UpdateUserForm(instance=request.user)
+        profile_form = UpdateProfileForm(instance=request.user.profile)
+        print(request.user.profile.bio)
+    return render(request, 'myauth/profile.html', {'user_form': user_form, 'profile_form': profile_form})
+
+
+class ChangePasswordView(SuccessMessageMixin, PasswordChangeView):
+    template_name = 'myauth/change_password.html'
+    success_message = "Вы сменили пароль"
+    success_url = reverse_lazy('profile')

@@ -7,15 +7,54 @@
     {% if form.errors %}
         <div style="display: table; margin: 0 auto; text-align: left;">
         {% for key, value in form.errors.items %}
-            <strong>{{ value }}rdfgfser</strong>
+            <strong>{{ value }}</strong>
         {% endfor %}
     {% endif %}
 
-<form method="post">
-    {% csrf_token %}
-    <table>
-        {{ form.as_table }}
-    </table>
-    <input type="submit" value="register">
-</form>
+    <form method="post">
+        {% csrf_token %}
+        {#        {{ form.as_p }}#}
+
+        <div class="mb-3">
+            <label for="id_username" class="form-label">Имя:</label>
+            <input type="text"
+                   class="form-control"
+                   name="username"
+                   maxlength="150"
+                   required=""
+                   id="id_username">
+        </div>
+        <div class="mb-3">
+            <label for="id_email" class="form-label">Email</label>
+            <input type="email"
+                   class="form-control"
+                   name="email"
+                   id="id_email"
+                   aria-describedby="emailHelp">
+            <div id="emailHelp" class="form-text"></div>
+        </div>
+        <div class="mb-3">
+            <label for="password1" class="form-label">Пароль</label>
+            <input type="password" 
+                   class="form-control" 
+                   id="password1"
+                   name="password1"
+                   placeholder="Введите пароль">
+            <br>
+            <input type="password" 
+                   class="form-control" 
+                   id="password2"
+                   name="password2"
+                   placeholder="Подтвердите пароль">
+
+        </div>
+        
+        <input class="btn btn-secondary" type="submit" value="Зарегестрироваться">
+    </form>
+    
 {% endblock %}
+
+
+
+
+

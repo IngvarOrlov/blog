@@ -1,5 +1,5 @@
 from django import template
-from ..models import Post
+from ..models import Post, Comment
 from django.db.models import Count
 from django.utils.safestring import mark_safe
 import markdown
@@ -16,6 +16,11 @@ def total_posts():
 def total_posts_by_user(user):
 
     return Post.objects.filter(status='PB', author=user).count()
+
+@register.simple_tag
+def total_comments_by_user(user):
+
+    return Comment.objects.filter(active=True, name=user).count()
 
 
 @register.inclusion_tag('main/latest_posts.html')

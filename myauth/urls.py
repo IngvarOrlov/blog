@@ -12,4 +12,5 @@ urlpatterns = [
     path('logout/', Logout.as_view(next_page=settings.LOGOUT_REDIRECT_URL), name='logout'),
     path('register/', MyUserCreateView.as_view(), name='register'),
     path('profile/', profile, name='profile'),
+    path('password_change/', ChangePasswordView.as_view(), name='password_change'),
 ]

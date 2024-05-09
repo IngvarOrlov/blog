@@ -1,10 +1,28 @@
 {% load main_tags %}
-<p class="card-body">
-    {% if user.is_authenticated %}
-        Привет {{ user.username }}!
-        Вами опубликовано <b>{% total_posts_by_user user.id%}</b> постов.
-        </p>
-    {% endif %}
+{% if user.is_authenticated %}
+    <div class="container text">
+        <div class="row">
+            <div class="col-md-6">
+                <img class="border-5 rounded mx-auto d-block mt-3" style="border: 10px solid #FFF8DC;" src="{{ user.profile.avatar.url }} " style="cursor: pointer;"/>
+            </div>
+            <div class="col-md-6 bg-primary-subtle bg-opacity-10 "  >
+                <p> {{ user.username }}: <a href="{% url 'profile' %}">ЛК</a></p>
+
+                <p class="small"> Посты: <b>{% total_posts_by_user user.id %}</b></p>
+                <p class="small"> Комментарии: <b>{% total_comments_by_user user.id %}</b></p>
+            </div>
+        </div>
+    </div>
+    <br>
+{% else %}
+
+    <div style="text-align: right;">
+        <button class="btn btn-outline-danger"
+                onclick="location.href='{% url 'login' %}'">Войти
+        </button>
+    </div>
+
+{% endif %}
 <h5 class="card-body">Последние публикации</h5>
 {% show_latest_posts 4 %}
 
