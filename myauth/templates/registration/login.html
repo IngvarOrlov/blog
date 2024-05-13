@@ -4,13 +4,15 @@
 {% endblock %}
 {% block content %}
 
-    <form method="post">
+    <form class="mt-4" method="post">
         {% csrf_token %}
         {{ form.as_p }}
         <input class="btn btn-secondary" type="submit" value="login">
     </form>
     <br>
     <div class="mb-5">
-        <p class="">Или можно <a href="{% url 'register' %}">Зарегестрироваться</a></p>
+        <p class="">Вы можете <a href="{% url 'register' %}">Зарегестрироваться</a> 
+       или войти через <a href="{% url 'social:begin' 'google-oauth2' %}"><img width="50" src="/media/google.jpg"></a>
+    </p>
     </div>
 {% endblock %}

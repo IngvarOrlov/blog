@@ -10,6 +10,7 @@ urlpatterns = [
     path('posts/search/', views.posts_search, name='posts_search'),
     path('posts/back/', views.back_to_posts, name='back_to_posts'),
     # path('posts/', views.PostListView.as_view(), name='posts'),
+    path('category/<slug:slug>/', views.PostFromCategory.as_view(), name="post_by_category"),
 
     path('', views.index, name='index'),
     path('posts/add_new/', views.addpost, name='addpost'),

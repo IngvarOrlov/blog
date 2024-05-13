@@ -8,6 +8,17 @@
     <link href="{% static 'css/mystyle.css' %}"
           rel="stylesheet"
     >
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+            integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js"
+            integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh"
+            crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js"
+            integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ"
+            crossorigin="anonymous"></script>
+
     <meta charset="UTF-8">
     <meta name="viewport">
 
@@ -19,26 +30,29 @@
 
 <body class="p-3 mb-2">
 
-<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+{% include 'menu.html' %}
 
-<div class="container text">
+<div class="container text mt-4">
     <div class="row">
         <div class="col-md-8">
-            {% include 'menu.html' %}
+            
             {% block content %}
             {% endblock %}
         </div>
-        <div class="col-md-4 bg-secondary bg-opacity-10" >
-            {% block sidebar %}
-            {% include 'sidebar.html' %}
-            {% endblock %}
-        </div>
+                <div class="col-md-4 bg-opacity-10" >
+                    {% block sidebar %}
+                    {% include 'sidebar.html' %}
+                    {% endblock %}
+                </div>
 
 
     </div>
 </div>
 
-</body >
+<footer class="py-2 bg-dark mt-2">
+    <div class="container"><p class="m-0 text-center text-white">Copyright &copy; Blog Website 2024, Powered by
+        Django</p></div>
+</footer>
+
+</body>
 </html>

@@ -5,12 +5,19 @@
 {% endblock %}
 {% block content %}
 
-    <div class="card bg-secondary bg-opacity-10" >
-        <div class="card-body">
-            <h4 class="card-title">{{ post.title }}</h4>
-            <p class="card-text">By {{ post.author }}</p>
-        <p class="date">опубликовано {{ post.created_at }}</p>
-        <hr>
+    <div class="card mb-3 ">
+        <div class="card-body container row">
+            <div class="col-4">
+                {% if post.category.avatar %}
+                    <img class="rounded-circle" src="{{ post.category.avatar.url }} " style="cursor: pointer;"/>
+                {% endif %}
+            </div>
+            <div class="col-8">
+                <h4 class="fw-bolder">{{ post.title }}</h4>
+                <p class="text-muted fst-italic mb-2 text-end">By {{ post.author }}</p>
+                <p class="date text-end">опубликовано {{ post.created_at }}</p>
+            </div>
+            <hr>
             <p class="card-text">{{ post.body | markdown }}</p>
             <a href="{% url 'back_to_posts' %} " class="card-link">back</a>
             {% if user == post.author %}
@@ -29,7 +36,7 @@
 
 
     </div>
-    <div class="card mt-2 bg-secondary bg-opacity-10" >
+    <div class="card mt-2 bg-secondary bg-opacity-10">
 
         {% if similar_posts %}
             <h5 class="card-body">Возможно Вам понравятся:</h5>
@@ -43,7 +50,7 @@
     </div>
 
 
-   
+
     {% with comments.count as total_comments %}
         <h5 class="card-title mt-2 mb-2">
             {{ total_comments }} comment{{ total_comments|pluralize }}
@@ -51,12 +58,21 @@
     {% endwith %}
 
     {% for comment in comments %}
-        <div class="comment">
-            <p class="card-body bg-secondary bg-opacity-10">
-                Comment {{ forloop.counter }} by {{ comment.name }}
-                {{ comment.created }}
+        <div class="comment mb-3">
+            <p class="text-muted fst-italic card-body bg-secondary bg-opacity-10">by <span>
+                <b>{{ comment.name }}</b>
+            </span>
+                <span class="date text-end">опубликовано {{ comment.created }}</span>
             </p>
-            {{ comment.body|linebreaks }}
+
+            <div class="card-body container row">
+                <div class="col-auto">
+                    <img class="rounded-circle" height="50" src="{{ comment.name.profile.avatar.url }}">
+                </div>
+                <div class="col-auto">
+                    {{ comment.body|linebreaks }}
+                </div>
+            </div>
         </div>
     {% empty %}
         <p>Пока комментариев нет</p>

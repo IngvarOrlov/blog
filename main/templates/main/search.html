@@ -1,7 +1,7 @@
 {% extends '../root.html' %}
 {% load main_tags %}
 {% block title %}
-    <title>Поиск</title>
+    <title>Поиск: {{ query }}</title>
 {% endblock %}
 {% block content %}
 
@@ -34,5 +34,8 @@
     {% empty %}
         <p>По запросу "{{ query }}" ничего не найдено</p>
     {% endfor %}
+    
+    
+    
     {% include "pagination.html" with page=object_list %}
 {% endblock %}

@@ -1,35 +1,26 @@
 {% load main_tags %}
-{% if user.is_authenticated %}
-    <div class="container text">
-        <div class="row">
-            <div class="col-md-6">
-                <img class="border-5 rounded mx-auto d-block mt-3" style="border: 10px solid #FFF8DC;" src="{{ user.profile.avatar.url }} " style="cursor: pointer;"/>
+{% include "main/category.html" %}
+<!-- Widgets-->
+     
+            <!-- Latest posts widget-->
+            <div class="card mb-4">
+                <div class="list-group">
+                    <a class="list-group-item bg-secondary bg-opacity-25  list-group-item-action" aria-current="true">
+                        Последние публикации
+                    </a>
+                    {% show_latest_posts 3 %}
+                </div>
             </div>
-            <div class="col-md-6 bg-primary-subtle bg-opacity-10 "  >
-                <p> {{ user.username }}: <a href="{% url 'profile' %}">ЛК</a></p>
-
-                <p class="small"> Посты: <b>{% total_posts_by_user user.id %}</b></p>
-                <p class="small"> Комментарии: <b>{% total_comments_by_user user.id %}</b></p>
+            <div class="card mb-4">
+                <div class="list-group">
+                    <a class="list-group-item bg-secondary bg-opacity-25  list-group-item-action" aria-current="true">
+                        Самые популярные
+                    </a>
+                    {% get_most_commented_posts as most_commented_posts %}
+                    {% for post in most_commented_posts %}
+                        <a class="list-group-item list-group-item-action"
+                           href="{{ post.get_absolute_url }}">{{ post.title }}</a>
+                    {% endfor %}
+                </div>
             </div>
-        </div>
-    </div>
-    <br>
-{% else %}
-
-    <div style="text-align: right;">
-        <button class="btn btn-outline-danger"
-                onclick="location.href='{% url 'login' %}'">Войти
-        </button>
-    </div>
-
-{% endif %}
-<h5 class="card-body">Последние публикации</h5>
-{% show_latest_posts 4 %}
-
-<h5 class="card-body">Самые популярные</h5>
-<ul>
-    {% get_most_commented_posts 3 as most_commented_post %}
-    {% for post in most_commented_post %}
-        <li><a href="{{ post.get_absolute_url }}"> {{ post.title }}</a></li>
-    {% endfor %}
-</ul>
+     

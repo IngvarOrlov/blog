@@ -13,7 +13,7 @@ from django.db.models import Count
 from taggit.models import Tag
 from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank, TrigramSimilarity
 
-from .models import Post, User
+from .models import Post, User, Category
 from .forms import PostForm, CommentForm, SearchForm
 from .slug import make_unique_slug
 
@@ -23,9 +23,11 @@ from .slug import make_unique_slug
 def posts(request, tag_slug=None):
     post_list = Post.objects.select_related("author").filter(status='PB')
     tag = None
+    title = "Blog"
     if tag_slug:
         tag = get_object_or_404(Tag, slug=tag_slug)
         post_list = post_list.filter(tags__in=[tag])
+        title = "Записи с тэгом "+tag.__str__()
 
     paginator = Paginator(post_list, 5)
     page_number = request.GET.get('page', 1)
@@ -38,7 +40,7 @@ def posts(request, tag_slug=None):
         posts = paginator.page(paginator.num_pages)
     except PageNotAnInteger:
         posts = paginator.page(1)
-    html = render(request, 'main/post_list.html', {"object_list": posts, 'tag': tag})
+    html = render(request, 'main/post_list.html', {"object_list": posts, 'tag': tag, 'title': title})
     html.set_cookie('back_page', page_number)
     if request.COOKIES.get('redirect'):
         html.delete_cookie('redirect')
@@ -192,3 +194,21 @@ def posts_search(request):
                   {'form': form,
                    'query': query,
                    'object_list': results})
+
+class PostFromCategory(ListView):
+    template_name = 'main/post_list.html'
+    context_object_name = 'posts'
+    category = None
+
+    def get_queryset(self):
+        self.category = Category.objects.get(slug=self.kwargs['slug'])
+        queryset = Post.objects.filter(category__slug=self.category.slug)
+        if not queryset:
+            sub_cat = Category.objects.filter(parent=self.category)
+            queryset = Post.objects.filter(category__in=sub_cat)
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = f'Записи из категории: {self.category.title}'
+        return context
