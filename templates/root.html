@@ -23,7 +23,7 @@
     <meta name="viewport">
 
     {% block title %}
-        <title>default</title>
+        <title>Blog</title>
     {% endblock %}
 </head>
 
@@ -34,25 +34,28 @@
 
 <div class="container text mt-4">
     <div class="row">
-        <div class="col-md-8">
-            
-            {% block content %}
+        {% if title == 'Update' %}
+            <div class="col-md-12">
+        {% else %}
+            <div class="col-md-8">
+        {% endif %}
+        {% block content %}
+        {% endblock %}
+        </div>
+        <div class="col-md-4 bg-opacity-10">
+            {% block sidebar %}
+                {% include 'sidebar.html' %}
             {% endblock %}
         </div>
-                <div class="col-md-4 bg-opacity-10" >
-                    {% block sidebar %}
-                    {% include 'sidebar.html' %}
-                    {% endblock %}
-                </div>
 
 
+        </div>
     </div>
-</div>
 
-<footer class="py-2 bg-dark mt-2">
-    <div class="container"><p class="m-0 text-center text-white">Copyright &copy; Blog Website 2024, Powered by
-        Django</p></div>
-</footer>
+    <footer class="py-2 bg-dark mt-2">
+        <div class="container"><p class="m-0 text-center text-white">Copyright &copy; Blog Website 2024, Powered by
+            Django</p></div>
+    </footer>
 
 </body>
 </html>

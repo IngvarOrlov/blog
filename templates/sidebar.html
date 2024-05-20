@@ -1,26 +1,29 @@
 {% load main_tags %}
+
+<!--  Category tree -->
 {% include "main/category.html" %}
-<!-- Widgets-->
-     
-            <!-- Latest posts widget-->
-            <div class="card mb-4">
-                <div class="list-group">
-                    <a class="list-group-item bg-secondary bg-opacity-25  list-group-item-action" aria-current="true">
-                        Последние публикации
-                    </a>
-                    {% show_latest_posts 3 %}
-                </div>
-            </div>
-            <div class="card mb-4">
-                <div class="list-group">
-                    <a class="list-group-item bg-secondary bg-opacity-25  list-group-item-action" aria-current="true">
-                        Самые популярные
-                    </a>
-                    {% get_most_commented_posts as most_commented_posts %}
-                    {% for post in most_commented_posts %}
-                        <a class="list-group-item list-group-item-action"
-                           href="{{ post.get_absolute_url }}">{{ post.title }}</a>
-                    {% endfor %}
-                </div>
-            </div>
+
+<!-- Latest posts -->
+<div class="card mb-4">
+    <div class="list-group">
+        <a class="list-group-item bg-secondary bg-opacity-25  list-group-item-action" aria-current="true">
+            Последние публикации
+        </a>
+        {% show_latest_posts 3 %}
+    </div>
+</div>
+
+<!-- Most comments -->
+<div class="card mb-4">
+    <div class="list-group">
+        <a class="list-group-item bg-secondary bg-opacity-25  list-group-item-action" aria-current="true">
+            Самые популярные
+        </a>
+        {% get_most_commented_posts as most_commented_posts %}
+        {% for post in most_commented_posts %}
+            <a class="list-group-item list-group-item-action"
+               href="{{ post.get_absolute_url }}">{{ post.title }}</a>
+        {% endfor %}
+    </div>
+</div>
      

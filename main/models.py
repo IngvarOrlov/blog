@@ -4,6 +4,10 @@ from django.db import models
 from taggit.managers import TaggableManager
 from PIL import Image
 from mptt.models import MPTTModel, TreeForeignKey
+from django_ckeditor_5.fields import CKEditor5Field
+from ckeditor_uploader.fields import RichTextUploadingField
+from ckeditor.fields import RichTextField
+
 
 from myauth.models import User
 
@@ -28,7 +32,7 @@ class Post(models.Model):
     slug = models.SlugField(max_length=250, unique=True)
     publish = models.DateTimeField(default=timezone.now)
     title = models.CharField(max_length=100, verbose_name="Заголовок")
-    body = models.TextField(verbose_name="Пост")
+    body = RichTextField(verbose_name="Пост", config_name='awesome_ckeditor')
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posts', verbose_name="Автор")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Время создания")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Время обновления")
@@ -50,7 +54,7 @@ class Post(models.Model):
         verbose_name_plural = 'Посты'
 
 
-class Comment(models.Model):
+class Comment(MPTTModel):
     post = models.ForeignKey(Post,
                              on_delete=models.CASCADE,
                              related_name='comments')
@@ -60,9 +64,18 @@ class Comment(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     active = models.BooleanField(default=True)
+    parent = TreeForeignKey('self',
+                            verbose_name='Родительский комментарий',
+                            null=True,
+                            blank=True,
+                            related_name='children',
+                            on_delete=models.CASCADE,
+                            )
 
+    # class MTTMeta:
+    #     order_insertion_by = ['-created']
     class Meta:
-        ordering = ['created']
+        ordering = ['-created']
         indexes = [
             models.Index(fields=['created']),
         ]
@@ -103,7 +116,7 @@ class Category(MPTTModel):
         """
         verbose_name = 'Категория'
         verbose_name_plural = 'Категории'
-        db_table = 'app_categories'
+        db_table = 'main_categories'
 
     def get_absolute_url(self):
         """

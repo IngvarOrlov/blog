@@ -1,11 +1,18 @@
 {% extends '../root.html' %}
+{% block title %}
+    <title>{{ title }}</title>
+{% endblock %}
+{% block sidebar %}
+{% endblock %}
 {% block content %}
     
     <h3 class="text">Edit Post</h3>
     <form method="POST">
+    
             {% csrf_token %}
             <table>
-                {{ form.as_table }}
+                {{ form.media }}
+                {{ form.as_p }}
             </table>
 {#            <button type="submit" value="Send" class="btn btn-primary">Submit</button>#}
             <input type="submit" value="Сохранить" class="btn btn-outline-secondary">

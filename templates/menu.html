@@ -63,7 +63,9 @@
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                 {% if user.is_authenticated %}
                     <li class="nav-item"><a class="nav-link" href="{% url 'profile' %}"><img
-                            class="rounded-circle" width="30" src="{{ user.profile.avatar.url }}"/> {{ user.username }}
+                            class="round_img" 
+                            style=" border-radius: 50%; box-shadow: 0 0 0 1px #586e89; object-fit: cover"
+                            height="30" width="30" src="{{ user.profile.avatar.url }}"/> {{ user.username }}
                     </a>  <li class="nav-item">
                         <form action="{% url 'logout' %}" method="post" id="secretKey">
                             {% csrf_token %}

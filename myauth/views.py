@@ -65,7 +65,6 @@ def profile(request):
     else:
         user_form = UpdateUserForm(instance=request.user)
         profile_form = UpdateProfileForm(instance=request.user.profile)
-        print(request.user.profile.bio)
     return render(request, 'myauth/profile.html', {'user_form': user_form, 'profile_form': profile_form})
 
 

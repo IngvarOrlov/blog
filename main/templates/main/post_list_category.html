@@ -1,16 +1,18 @@
 {% extends '../root.html' %}
 {% load main_tags %}
 {% block title %}
-    <title>Поиск: {{ query }}</title>
+    <title>{{ title }}</title>
 {% endblock %}
 {% block content %}
 
-
     {% if object_list.count > 0 %}
-        <p>По запросу "{{ query }}" найдено {{ object_list.count }} результатов</p>
+        <p class="fst-italic mb-4">В категории <b>{{ category }}</b> найдено {{ object_list.count }} результатов</p>
+    {% else %}
+        <p class="fst-italic mb-4">В категории {{ category }} ничего не найдено</p>
+ 
     {% endif %}
 
-     {% for post in object_list %}
+    {% for post in object_list %}
 
 
         <div class="card mb-3 ">
@@ -42,7 +44,7 @@
                 </div>
             </div>
                 <hr>
-                <p>{{ post.body | safe | markdown | truncatewords_html:30 }}
+                <p>{{ post.body| markdown | truncatewords_html:30 }}
                 </p>
                 {#                <a href='{{ post.get_absolute_url }}'>show</a>#}
             </div>

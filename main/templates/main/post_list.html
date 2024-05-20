@@ -16,7 +16,10 @@
             <div class="card-body container row">
             <div class="col-4">
             {% if post.category.avatar %}
-            <img class="rounded-circle" src="{{ post.category.avatar.url }} " style="cursor: pointer;"/>
+            <img class="rounded-circle" width="120" height="120" src="{{ post.category.avatar.url }} " 
+                 style="cursor: pointer;  border-radius: 60px;
+    box-shadow: 0 0 0 7px #d1d1da;
+    object-fit: cover;"/>
             {% endif %}
             </div>
             <div class="col-8">
@@ -38,7 +41,7 @@
                 </div>
             </div>
                 <hr>
-                <p>{{ post.body| markdown | truncatewords_html:30 }}
+                <p>{{ post.body | safe | markdown | truncatewords_html:30 }}
                 </p>
                 {#                <a href='{{ post.get_absolute_url }}'>show</a>#}
             </div>

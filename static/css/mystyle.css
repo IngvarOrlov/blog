@@ -7,11 +7,6 @@ body {
     color: #020202; /* Белый текст */
 }
 
-h5 {
-    color: #337aa6; /* Ссылки могут остаться такими же или изменить цвет, чтобы лучше смотрелись на темном фоне */
-    text-decoration: none;
-}
-
 h1 {
     font-weight: normal;
     border-bottom: 1px solid #040303; /* Светлее для темного фона */
@@ -37,7 +32,6 @@ h2 {
     background: #555; /* Темнее, чем основной фон, для контраста */
     height: 100%;
 }
-
 
 
 /* pagination */
@@ -79,20 +73,36 @@ input[type=submit] {
     color: #666; /* Светлее для лучшей видимости на темном фоне */
 }
 
-.post{
+.post {
     background-color: #d3d6d3;
     border-color: #2a2a3c;
     border-radius: 15px;
 }
+
 .post-title {
     color: #292626;
 }
+
 .navbar-color {
     background-color: #a6c3ca;
 }
+
 .date {
     color: #605e5e; /* Светлее, чтобы было видно на темном фоне */
     font-family: georgia, serif;
     font-size: 12px;
     font-style: italic;
+}
+
+.round_img {
+    border-radius: 50%;
+    box-shadow: 0 0 0 3px #586e89;
+    object-fit: cover;
+}
+
+.round_category {
+    border-radius: 60px;
+    box-shadow: 0 0 0 3px #586e89;
+    object-fit: cover;
+    width: 120px;
 }

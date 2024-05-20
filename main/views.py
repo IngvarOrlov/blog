@@ -55,7 +55,10 @@ def back_to_posts(request):
 
 def index(request):
     users = User.objects.all()
-    return render(request, 'index.html', {'user_list': users})
+    categories = Category.objects.all()
+    return render(request,
+                  'index.html',
+                  {'user_list': users, 'categories': categories})
 
 
 @login_required
@@ -71,14 +74,17 @@ def addpost(request):
     slug = make_unique_slug(request.POST.get('title'))
     tag_list = str(request.POST.get('tags')).split(',')
     # print(tag_list)
+    cat = Category.objects.get(id=request.POST.get('category'))
     post = Post.objects.create(
         title=request.POST.get('title'),
         body=request.POST.get('body'),
         author=user,
-        slug=slug
+        slug=slug,
+        category=cat,
     )
     for tag in tag_list:
         post.tags.add(tag.strip())
+
 
     messages.success(request, "Пост успешно добавлен")
     return redirect('posts')
@@ -92,7 +98,7 @@ def show_post(request, slug):
         # Список схожих постов
         post_tags_ids = post.tags.values_list('id', flat=True)
         similar_posts = Post.objects.filter(tags__in=post_tags_ids, status='PB').exclude(id=post.id)
-        similar_posts = similar_posts.annotate(same_tags=Count('title')).order_by('-same_tags', '-publish')[:4]
+        similar_posts = similar_posts.annotate(same_tags=Count('slug')).order_by('-same_tags', '-publish')[:4]
         html = render(request,
                       'main/post_detail.html',
                       {'post': post,
@@ -118,8 +124,15 @@ def update_post(request, slug):
             tags = ', '.join(tags)
             dict_model['tags'] = tags
             form = PostForm(dict_model)
-            return render(request, 'main/post_update.html', {'form': form, 'post':post})
+            return render(request, 'main/post_update.html', {'form': form, 'post':post, 'title':'Update'})
         # POST
+        # post.tags
+        tag_list = str(request.POST.get('tags')).split(',')
+        for tag in post.tags.all():
+            post.tags.remove(tag)
+        for tag in tag_list:
+            post.tags.add(tag.strip())
+        post.category = Category.objects.get(id=request.POST.get('category'))
         post.title = request.POST.get('title')
         post.body = request.POST.get('body')
         post.save()
@@ -179,12 +192,13 @@ def posts_search(request):
         form = SearchForm(request.GET)
         if form.is_valid():
             query = form.cleaned_data['query']
-            search_vector = SearchVector('title', weight='A') + SearchVector('body', weight='B')
-            search_query = SearchQuery(query)
+
             results = Post.objects.filter(status='PB').annotate(
                 similarity=TrigramSimilarity('title', query),
             ).filter(similarity__gt=0.1).order_by('-similarity')
             if not results:
+                search_vector = SearchVector('title', weight='A') + SearchVector('body', weight='B')
+                search_query = SearchQuery(query)
                 results = Post.objects.filter(status='PB').annotate(
                     rank=SearchRank(search_vector, search_query)).filter(rank__gte=0.3).order_by('-rank')
                 print(results)
@@ -196,7 +210,7 @@ def posts_search(request):
                    'object_list': results})
 
 class PostFromCategory(ListView):
-    template_name = 'main/post_list.html'
+    template_name = 'main/post_list_category.html'
     context_object_name = 'posts'
     category = None
 
@@ -211,4 +225,5 @@ class PostFromCategory(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = f'Записи из категории: {self.category.title}'
+        context['category']=self.category
         return context

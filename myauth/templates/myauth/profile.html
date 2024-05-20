@@ -6,9 +6,9 @@
 
 {% block content %}
     <div class="card-body">
-                    Написано постов: {% total_posts %}
+                    Написано постов: {% total_posts_by_user user.id %}
                 </div>
-    <div class="card-body">
+    <div class="card-body mb-3">
                     Написано комментариев: {% total_comments_by_user user.id %}
                 </div>
     

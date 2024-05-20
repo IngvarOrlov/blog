@@ -1,17 +1,21 @@
 {% extends '../root.html' %}
 {% block title %}
-    
+
     <title>Новый пост</title>
 {% endblock %}
 {% block content %}
-    <div class="mt-sm-2" >
-    <h4 class="text">New Post</h4>
-    <form method="POST">
+    <div class="mt-sm-2">
+        <h4 class="text">New Post</h4>
+        <form method="POST">
+            {{ form.media }}
             {% csrf_token %}
+            
+            
             <table>
+                {{ form.media }}
                 {{ form.as_p }}
             </table>
-{#            <button type="submit" value="Send" class="btn btn-primary">Submit</button>#}
+            {#            <button type="submit" value="Send" class="btn btn-primary">Submit</button>#}
             <input type="submit" value="Сохранить" class="btn btn-outline-secondary mt-4">
         </form>
     </div>
