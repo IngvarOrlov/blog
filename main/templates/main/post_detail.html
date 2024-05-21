@@ -4,6 +4,7 @@
     <title>{{ post.title.title }}</title>
 {% endblock %}
 {% block content %}
+    {% load mptt_tags static %}
 
     <div class="card mb-3 ">
         <div class="card-body container row">
@@ -50,36 +51,7 @@
         {% endif %}
     </div>
 
-
-
-    {% with comments.count as total_comments %}
-        <h5 class="card-title mt-2 mb-2">
-            {{ total_comments }} comment{{ total_comments|pluralize }}
-        </h5>
-    {% endwith %}
-
-    {% for comment in comments %}
-        <div class="comment mb-3">
-            <p class="text-muted fst-italic card-body bg-secondary bg-opacity-10">by <span>
-                <b>{{ comment.name }}</b>
-            </span>
-                <span class="date text-end">опубликовано {{ comment.created }}</span>
-            </p>
-
-            <div class="card-body container row">
-                <div class="col-auto">
-                    <img class="round_img" height="50" width="50"
-                         style="border-radius: 50%; box-shadow: 0 0 0 3px #586e89; object-fit: cover"
-                         src="{{ comment.name.profile.avatar.url }}">
-                </div>
-                <div class="col-auto">
-                    {{ comment.body|linebreaks }}
-                </div>
-            </div>
-        </div>
-    {% empty %}
-        <p>Пока комментариев нет</p>
-    {% endfor %}
-
+    
+{#    {% include "main/comments_list.html" %}#}
     {% include "main/comment_form.html" %}
 {% endblock %}

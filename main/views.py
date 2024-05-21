@@ -13,7 +13,7 @@ from django.db.models import Count
 from taggit.models import Tag
 from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank, TrigramSimilarity
 
-from .models import Post, User, Category
+from .models import Post, User, Category, Comment
 from .forms import PostForm, CommentForm, SearchForm
 from .slug import make_unique_slug
 
@@ -27,7 +27,7 @@ def posts(request, tag_slug=None):
     if tag_slug:
         tag = get_object_or_404(Tag, slug=tag_slug)
         post_list = post_list.filter(tags__in=[tag])
-        title = "Записи с тэгом "+tag.__str__()
+        title = "Записи с тэгом " + tag.__str__()
 
     paginator = Paginator(post_list, 5)
     page_number = request.GET.get('page', 1)
@@ -54,11 +54,10 @@ def back_to_posts(request):
 
 
 def index(request):
-    users = User.objects.all()
     categories = Category.objects.all()
     return render(request,
                   'index.html',
-                  {'user_list': users, 'categories': categories})
+                  {'categories': categories})
 
 
 @login_required
@@ -84,7 +83,6 @@ def addpost(request):
     )
     for tag in tag_list:
         post.tags.add(tag.strip())
-
 
     messages.success(request, "Пост успешно добавлен")
     return redirect('posts')
@@ -124,7 +122,7 @@ def update_post(request, slug):
             tags = ', '.join(tags)
             dict_model['tags'] = tags
             form = PostForm(dict_model)
-            return render(request, 'main/post_update.html', {'form': form, 'post':post, 'title':'Update'})
+            return render(request, 'main/post_update.html', {'form': form, 'post': post, 'title': 'Update'})
         # POST
         # post.tags
         tag_list = str(request.POST.get('tags')).split(',')
@@ -141,6 +139,7 @@ def update_post(request, slug):
     except Post.DoesNotExist:
         return HttpResponseNotFound('<h2>Post not found</h2>')
 
+
 @login_required
 def delete_post(request, slug):
     try:
@@ -152,6 +151,7 @@ def delete_post(request, slug):
         return redirect('posts')
     except Post.DoesNotExist:
         return HttpResponseNotFound('<h2>Post not found</h2>')
+
 
 class PostDetailView(LoginRequiredMixin, DetailView):
     model = Post
@@ -165,17 +165,17 @@ class PostListView(ListView):
 def post_comment(request, slug):
     post = get_object_or_404(Post,
                              slug=slug)
-    comment = None
-    form = CommentForm(data=request.POST)
-    if form.is_valid():
-        comment = form.save(commit=False)
-        comment.post = post
-        commentator = User.objects.get(id=request.user.id)
-        comment.name = commentator
-        comment.save()
-        messages.success(request, 'Комментарий создан успешно')
-    else:
-        messages.error(request, 'ой, ошибка!')
+    comment = Comment()
+    comment.body = request.POST.get('body', '')
+    comment.post = post
+    commentator = User.objects.get(id=request.user.id)
+    comment.name = commentator
+    if request.POST.get('parent'):
+        parent = Comment.objects.get(id=int(request.POST.get('parent')))
+        comment.parent = parent
+    messages.success(request, 'Комментарий создан успешно')
+    comment.save()
+
     comments = post.comments.filter(active=True)
     form = CommentForm()
     return render(request,
@@ -209,6 +209,7 @@ def posts_search(request):
                    'query': query,
                    'object_list': results})
 
+
 class PostFromCategory(ListView):
     template_name = 'main/post_list_category.html'
     context_object_name = 'posts'
@@ -225,5 +226,5 @@ class PostFromCategory(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = f'Записи из категории: {self.category.title}'
-        context['category']=self.category
+        context['category'] = self.category
         return context

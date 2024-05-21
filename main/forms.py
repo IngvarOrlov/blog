@@ -31,7 +31,7 @@ class CommentForm(forms.ModelForm):
     parent = forms.IntegerField(widget=forms.HiddenInput, required=False)
     class Meta:
         model = Comment
-        fields = ['body']
+        fields = ['body', 'parent']
         labels = {"body": ''}
         widgets = {
             "body": forms.Textarea(attrs={'class': "form-control",
@@ -39,6 +39,7 @@ class CommentForm(forms.ModelForm):
                                           'rows': 5,
                                           'placeholder': 'Комментарий',
                                           }),
+
         }
 
 
