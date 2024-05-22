@@ -5,38 +5,42 @@
 {% block sidebar %}
 {% endblock %}
 {% block content %}
-    
+
     <h3 class="text">Edit Post</h3>
     <form method="POST">
-    
-            {% csrf_token %}
-            <table>
-                {{ form.media }}
-                {{ form.as_p }}
-            </table>
-{#            <button type="submit" value="Send" class="btn btn-primary">Submit</button>#}
-            <input type="submit" value="Сохранить" class="btn btn-outline-secondary">
-            <input type="button" value="Удалить" class="btn btn-danger" data-toggle="modal" data-target=".bd-example-modal-sm">
-        
-<div class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-sm">
-    <div class="modal-content">
-        <div class="modal-body">
-        Точно удалить?
-      </div>
-     <div class="modal-footer">
-         
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
-     
-         <a href="{% url 'deletepost' post.slug %}"<button type="submit"  class="btn btn-danger">Удалить</button></a>
 
-      </div>
-    </div>
-  </div>
-</div>
-    
-        </form>
+        {% csrf_token %}
+        <table>
+            {{ form.media }}
+            {{ form.as_p }}
+        </table>
+        {#            <button type="submit" value="Send" class="btn btn-primary">Submit</button>#}
+        <input type="submit" value="Сохранить" class="btn btn-outline-secondary">
+        <input type="button" value="Удалить" class="btn btn-danger" data-toggle="modal"
+               data-target=".bd-example-modal-sm">
 
-    
-    
+        <div class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        Точно удалить?
+                    </div>
+                    <div class="modal-footer">
+
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+
+                        <a href="{% url 'deletepost' post.slug %}"
+                        <button type="submit" class="btn btn-danger">Удалить</button>
+                        </a>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </form>
+
+
+
 {% endblock %}

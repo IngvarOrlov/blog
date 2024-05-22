@@ -182,6 +182,18 @@ def post_comment(request, slug):
                   'main/post_detail.html',
                   {'post': post, 'form': form, 'comments': comments})
 
+@login_required
+def post_comment_delete(request, com_id):
+    try:
+        comment = Comment.objects.get(id=com_id)
+    except Comment.DoesNotExist:
+        return HttpResponseNotFound('<h2>Comment not found</h2>')
+    if comment.name != request.user:
+        return redirect('index')
+    post = comment.post
+    comment.delete()
+    messages.success(request, 'Комментарий удален')
+    return redirect('showpost', slug=post.slug)
 
 def posts_search(request):
     form = SearchForm()
@@ -201,7 +213,6 @@ def posts_search(request):
                 search_query = SearchQuery(query)
                 results = Post.objects.filter(status='PB').annotate(
                     rank=SearchRank(search_vector, search_query)).filter(rank__gte=0.3).order_by('-rank')
-                print(results)
 
     return render(request,
                   'main/search.html',

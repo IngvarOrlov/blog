@@ -32,7 +32,7 @@ class Post(models.Model):
     slug = models.SlugField(max_length=250, unique=True)
     publish = models.DateTimeField(default=timezone.now)
     title = models.CharField(max_length=100, verbose_name="Заголовок")
-    body = RichTextField(verbose_name="Пост", config_name='awesome_ckeditor')
+    body = RichTextField(verbose_name="Пост", config_name='min')
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posts', verbose_name="Автор")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Время создания")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Время обновления")

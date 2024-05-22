@@ -21,9 +21,9 @@
             <hr>
             <p class="card-text">{{ post.body | safe | markdown }}</p>
             <div><a href="{% url 'back_to_posts' %} " class="card-link">back</a>
-            {% if user == post.author %}
-                <a href={% url 'updatepost' slug=post.slug %} class="card-link">edit</a>
-            {% endif %}
+                {% if user == post.author %}
+                    <a href={% url 'updatepost' slug=post.slug %} class="card-link">edit</a>
+                {% endif %}
             </div>
         </div>
 
@@ -44,14 +44,13 @@
             <h5 class="card-body">Возможно Вам понравятся:</h5>
             {% for similar_post in similar_posts %}
                 <p class="card-title ms-3"><a href={% url 'showpost' slug=similar_post.slug %}>{{ similar_post.title }}
-                </p></a>
+                </a></p>
             {% endfor %}
         {% else %}
             <h5 class="card-body">Похожих постов пока нет</h5>
         {% endif %}
     </div>
 
-    
-{#    {% include "main/comments_list.html" %}#}
+
     {% include "main/comment_form.html" %}
 {% endblock %}

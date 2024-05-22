@@ -1,59 +1,102 @@
-    {% with comments.count as total_comments %}
-        <h5 class="card-title mt-4 mb-2">
-            Комментарии {{ total_comments }}
-        </h5>
-    {% endwith %}
+{% with comments.count as total_comments %}
+    <h5 class="card-title mt-4 mb-2">
+        Комментарии {{ total_comments }}
+    </h5>
+{% endwith %}
 
 
 {% load mptt_tags static %}
 {% recursetree post.comments.all %}
-    
-        <div class="comment mb-3">
-            <p class="text-muted fst-italic card-body bg-secondary bg-opacity-10">by <span>
+
+    <div class="comment mb-3">
+        <p class="text-muted fst-italic card-body bg-secondary bg-opacity-10">by <span>
                 <b>{{ node.name }}</b>
             </span>
-                <span class="date text-end">опубликовано {{ node.created }}</span>
-                {% if node.parent %}
-                    <span class="small">отвечает {{ node.parent.name }}</span>
-                {% endif %}
-            </p>
+            <span class="date text-end">опубликовано {{ node.created }}</span>
+            {% if node.parent %}
+                <span class="small">отвечает {{ node.parent.name }}</span>
+                {% if node.name.id == request.user.id %}
+                    <span class="badge text-bg-danger"
+                          data-target="#Modal-{{ node.id }}"
+                          data-toggle="modal"
+                    >Удалить</span>
 
-            <div class="card-body container row">
-                <div class="col-auto">
-                    <img class="round_img" height="50" width="50"
-                         style="border-radius: 50%; box-shadow: 0 0 0 3px #586e89; object-fit: cover"
-                         src="{{ node.name.profile.avatar.url }}">
-                </div>
-                <div class="col-auto">
-                    {{ node.body|linebreaks }}
-                </div>
+
+                    {#                       <a href="{% url 'post_comment_delete' node.id %}">#}
+                    {#                <button type="submit"#}
+                    {#                        class="btn btn-sm btn-outline-dark btn-reply mt-2"#}
+                    {#                >Удалить#}
+                    {#                </button>#}
+                    {#            </a>#}
+
+{#                    <input type="button" value="X" class="btn btn-sm btn-outline-dark btn-reply mt-2"#}
+{#                           data-toggle="modal"#}
+{#                           data-target="#Modal-{{ node.id }}">#}
+
+                    <div class="modal fade bd-example-modal-sm"
+                         tabindex="-1" role="dialog"
+                         aria-labelledby="mySmallModalLabel"
+                         id="Modal-{{ node.id }}"
+                         aria-hidden="true">
+                        <div class="modal-dialog modal-sm">
+                            <div class="modal-content">
+                                <div class="modal-body">
+                                    Удалить комментарий?
+                                </div>
+                                <div class="modal-footer">
+
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+
+                                    <a href="{% url 'post_comment_delete' node.id %}">
+                                        <button type="submit" class="btn btn-danger">Удалить </button>
+                                    </a>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                {% endif %}
+            {% endif %}
+
+
+        </p>
+
+        <div class="card-body container row">
+            <div class="col-auto">
+                <img class="round_img" height="50" width="50"
+                     style="border-radius: 50%; box-shadow: 0 0 0 3px #586e89; object-fit: cover"
+                     src="{{ node.name.profile.avatar.url }}">
+            </div>
+            <div class="col-auto">
+                {{ node.body|linebreaks }}
 
             </div>
+
+        </div>
         <a class="btn btn-sm btn-outline-dark btn-reply mt-2"
            href="#commentForm"
            onclick="document.getElementById('parent').value = {{ node.id }};"
-{#           data-comment-id="{{ comment.id }}"#}
-{#           data-comment-username="{{ comment.name }}"#}
         >Ответить</a>
-        
-        </div>
-        
-{#    {% empty %}#}
-{#        <p>Пока комментариев нет</p>#}
-{#    {% endfor %}#}
-    <div style="margin-left: 30px">
-{% if not node.is_leaf_node %}
-        {{ children }}
-     {% endif %}
+
     </div>
-</ul>
-   
+    {#    {% empty %}#}
+    {#        <p>Пока комментариев нет</p>#}
+    {#    {% endfor %}#}
+    <div style="margin-left: 30px">
+        {% if not node.is_leaf_node %}
+            {{ children }}
+        {% endif %}
+    </div>
+    </ul>
+
 {% endrecursetree %}
 
 <h5 class="card-body">Добавить комментарий</h5>
 
 <form id="commentForm" name=commentForm" action="{% url 'post_comment' post.slug %}" method="post">
-   {{ form.body }}
+    {{ form.body }}
     <input type="hidden" id="parent" name="parent">
     {% csrf_token %}
     <p><input class="btn btn-primary mt-3 mb-3" type="submit" value="Написать"></p>
