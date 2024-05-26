@@ -18,7 +18,7 @@
                     {% if request.path == '/' %}
                     active
                     {% endif %}
-                        " aria-current="page" href="/">Home</a>
+                        " aria-current="page" href="/">Главная</a>
                 </li>
 
 
@@ -27,23 +27,8 @@
                     {% if request.path == '/posts/' %}
                     active
                     {% endif %}
-                        " href="{% url 'posts' %}">Posts</a>
+                        " href="{% url 'posts' %}">Публикации</a>
                 </li>
-
-
-                {% if user.is_authenticated %}
-
-                    <li class="nav-item">
-                        <a class="nav-link
-                    {% if request.path == "/posts/add_new/" %}
-                    active
-                    {% endif %}
-                        " href="/posts/add_new/">Add post</a>
-                    </li>
-
-                  
-
-                {% endif %}
 
 
                 <form class="d-flex" role="search" method="get" action="{% url 'posts_search' %}">
@@ -62,6 +47,14 @@
             </ul>
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                 {% if user.is_authenticated %}
+                        <li class="nav-item">
+                        <a class="nav-link
+                    {% if request.path == "/posts/add_new/" %}
+                    active
+                    {% endif %}
+                        " href="/posts/add_new/">Новый пост</a>
+                    </li>
+
                     <li class="nav-item"><a class="nav-link" href="{% url 'profile' %}"><img
                             class="round_img" 
                             style=" border-radius: 50%; box-shadow: 0 0 0 1px #586e89; object-fit: cover"

@@ -93,6 +93,7 @@
 
 {% endrecursetree %}
 
+{% if user.is_authenticated %}
 <h5 class="card-body">Добавить комментарий</h5>
 
 <form id="commentForm" name=commentForm" action="{% url 'post_comment' post.slug %}" method="post">
@@ -101,3 +102,6 @@
     {% csrf_token %}
     <p><input class="btn btn-primary mt-3 mb-3" type="submit" value="Написать"></p>
 </form>
+    {% else %}
+    <p class="card-body mt-3"><a href="{% url 'login' %}">Авторизуйтесь</a> чтобы оставлять комментарии</p>
+{% endif %}

@@ -111,9 +111,6 @@ class Category(MPTTModel):
         order_insertion_by = ('title',)
 
     class Meta:
-        """
-        Название модели в админ панели, таблица с данными
-        """
         verbose_name = 'Категория'
         verbose_name_plural = 'Категории'
         db_table = 'main_categories'
@@ -136,7 +133,4 @@ class Category(MPTTModel):
 
 
     def __str__(self):
-        """
-        Возвращение заголовка категории
-        """
         return self.title

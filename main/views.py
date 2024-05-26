@@ -29,7 +29,7 @@ def posts(request, tag_slug=None):
         post_list = post_list.filter(tags__in=[tag])
         title = "Записи с тэгом " + tag.__str__()
 
-    paginator = Paginator(post_list, 5)
+    paginator = Paginator(post_list, 4)
     page_number = request.GET.get('page', 1)
     # if redirect: pull page from cookie
     if request.COOKIES.get('redirect'):
@@ -225,10 +225,13 @@ class PostFromCategory(ListView):
     template_name = 'main/post_list_category.html'
     context_object_name = 'posts'
     category = None
+    paginate_by = 4
 
     def get_queryset(self):
         self.category = Category.objects.get(slug=self.kwargs['slug'])
         queryset = Post.objects.filter(category__slug=self.category.slug)
+        children_count = Post.objects.filter(category__parent=self.category).count()
+        self.category_count = queryset.count()+children_count
         if not queryset:
             sub_cat = Category.objects.filter(parent=self.category)
             queryset = Post.objects.filter(category__in=sub_cat)
@@ -237,5 +240,6 @@ class PostFromCategory(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = f'Записи из категории: {self.category.title}'
+        context['category_count'] = self.category_count
         context['category'] = self.category
         return context

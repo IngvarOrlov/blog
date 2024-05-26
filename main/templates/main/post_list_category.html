@@ -5,8 +5,8 @@
 {% endblock %}
 {% block content %}
 
-    {% if object_list.count > 0 %}
-        <p class="fst-italic mb-4">В категории <b>{{ category }}</b> найдено {{ object_list.count }} результатов</p>
+    {% if category_count > 0 %}
+        <p class="fst-italic mb-4">В категории <b>{{ category }}</b> найдено {{ category_count }} результатов</p>
     {% else %}
         <p class="fst-italic mb-4">В категории {{ category }} ничего не найдено</p>
  
@@ -54,5 +54,6 @@
 
 
     {% endfor %}
-    {% include "pagination.html" with page=object_list %}
+    {% include "pagination.html" with page=page_obj %}
+    
 {% endblock %}
