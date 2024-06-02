@@ -21,7 +21,7 @@ from .slug import make_unique_slug
 # Create your views here.
 
 def posts(request, tag_slug=None):
-    post_list = Post.objects.select_related("author").filter(status='PB')
+    post_list = Post.objects.select_related("author", "category").prefetch_related("tags").filter(status='PB')
     tag = None
     title = "Blog"
     if tag_slug:
@@ -90,7 +90,7 @@ def addpost(request):
 
 def show_post(request, slug):
     try:
-        post = Post.objects.select_related("author").get(slug=slug)
+        post = Post.objects.select_related("author", "category").prefetch_related("comments").get(slug=slug)
         comments = post.comments.filter(active=True)
         form = CommentForm()
         # Список схожих постов
@@ -205,7 +205,7 @@ def posts_search(request):
         if form.is_valid():
             query = form.cleaned_data['query']
 
-            results = Post.objects.filter(status='PB').annotate(
+            results = Post.objects.select_related("author", "category").prefetch_related("tags").filter(status='PB').annotate(
                 similarity=TrigramSimilarity('title', query),
             ).filter(similarity__gt=0.1).order_by('-similarity')
             if not results:
