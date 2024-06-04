@@ -1,0 +1,44 @@
+{% extends 'root.html' %}
+{% load main_tags %}
+{% block title %}
+    <title>Профиль {{ user.username }}</title>
+{% endblock title %}
+
+{% block content %}
+
+
+    <div class="card border-0">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3">
+                    <figure>
+                        <img src="{{ profile.profile.avatar.url }}"
+                             class="round_img" alt="{{ profile }}">
+                    </figure>
+                </div>
+                <div class="col-md-9">
+                    <h5 class="card-title">
+                        {{ profile }}
+                    </h5>
+                    <div class="card-text">
+                        <ul>
+                            <li>Написано постов: {% total_posts_by_user user.id %}</li>
+                            <li>Написано комментариев: {% total_comments_by_user user.id %}</li>
+                            <li>Никнейм: {{ profile.username }}</li>
+                            {% if profile.get_full_name %}
+                                <li>Имя и фамилия: {{ profile.get_full_name }}</li> {% endif %}
+                            <li>Заходил: {{ profile.last_login }}</li>
+                            <li>О себе: {{ profile.profile.bio }}</li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+            {% if request.user.id == profile.id%}
+                <a href="{% url 'profile_edit' %}" class="btn btn-sm btn-outline-primary">Редактировать
+                    профиль</a> {% endif %}
+
+        </div>
+    </div>
+
+{% endblock %}

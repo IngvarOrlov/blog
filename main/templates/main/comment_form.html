@@ -15,49 +15,50 @@
             <span class="date text-end">опубликовано {{ node.created }}</span>
             {% if node.parent %}
                 <span class="small">отвечает {{ node.parent.name }}</span>
-                {% if node.name.id == request.user.id %}
-                    <span class="badge text-bg-danger"
-                          data-target="#Modal-{{ node.id }}"
-                          data-toggle="modal"
-                    >Удалить</span>
+            {% endif %}
+            {% if node.name.id == request.user.id %}
+                <span class="badge text-danger"
+                      data-target="#Modal-{{ node.id }}"
+                      data-toggle="modal"
+                >Удалить</span>
 
 
-                    {#                       <a href="{% url 'post_comment_delete' node.id %}">#}
-                    {#                <button type="submit"#}
-                    {#                        class="btn btn-sm btn-outline-dark btn-reply mt-2"#}
-                    {#                >Удалить#}
-                    {#                </button>#}
-                    {#            </a>#}
+                {#                       <a href="{% url 'post_comment_delete' node.id %}">#}
+                {#                <button type="submit"#}
+                {#                        class="btn btn-sm btn-outline-dark btn-reply mt-2"#}
+                {#                >Удалить#}
+                {#                </button>#}
+                {#            </a>#}
 
-{#                    <input type="button" value="X" class="btn btn-sm btn-outline-dark btn-reply mt-2"#}
-{#                           data-toggle="modal"#}
-{#                           data-target="#Modal-{{ node.id }}">#}
+                {#                    <input type="button" value="X" class="btn btn-sm btn-outline-dark btn-reply mt-2"#}
+                {#                           data-toggle="modal"#}
+                {#                           data-target="#Modal-{{ node.id }}">#}
 
-                    <div class="modal fade bd-example-modal-sm"
-                         tabindex="-1" role="dialog"
-                         aria-labelledby="mySmallModalLabel"
-                         id="Modal-{{ node.id }}"
-                         aria-hidden="true">
-                        <div class="modal-dialog modal-sm">
-                            <div class="modal-content">
-                                <div class="modal-body">
-                                    Удалить комментарий?
-                                </div>
-                                <div class="modal-footer">
+                <div class="modal fade bd-example-modal-sm"
+                     tabindex="-1" role="dialog"
+                     aria-labelledby="mySmallModalLabel"
+                     id="Modal-{{ node.id }}"
+                     aria-hidden="true">
+                    <div class="modal-dialog modal-sm">
+                        <div class="modal-content">
+                            <div class="modal-body">
+                                Удалить комментарий?
+                            </div>
+                            <div class="modal-footer">
 
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
 
-                                    <a href="{% url 'post_comment_delete' node.id %}">
-                                        <button type="submit" class="btn btn-danger">Удалить </button>
-                                    </a>
+                                <a href="{% url 'post_comment_delete' node.id %}">
+                                    <button type="submit" class="btn btn-danger">Удалить</button>
+                                </a>
 
-                                </div>
                             </div>
                         </div>
                     </div>
+                </div>
 
 
-                {% endif %}
+
             {% endif %}
 
 
@@ -65,9 +66,9 @@
 
         <div class="card-body container row">
             <div class="col-auto">
-                <img class="round_img" height="50" width="50"
-                     style="border-radius: 50%; box-shadow: 0 0 0 3px #586e89; object-fit: cover"
-                     src="{{ node.name.profile.avatar.url }}">
+                <a href="{% url 'profile_view' node.name.pk %}"><img class="round_img" height="50" width="50"
+                                                                     style="border-radius: 50%; box-shadow: 0 0 0 3px #586e89; object-fit: cover"
+                                                                     src="{{ node.name.profile.avatar.url }}"></a>
             </div>
             <div class="col-auto">
                 {{ node.body|linebreaks }}
@@ -94,14 +95,14 @@
 {% endrecursetree %}
 
 {% if user.is_authenticated %}
-<h5 class="card-body">Добавить комментарий</h5>
+    <h5 class="card-body">Добавить комментарий</h5>
 
-<form id="commentForm" name=commentForm" action="{% url 'post_comment' post.slug %}" method="post">
-    {{ form.body }}
-    <input type="hidden" id="parent" name="parent">
-    {% csrf_token %}
-    <p><input class="btn btn-primary mt-3 mb-3" type="submit" value="Написать"></p>
-</form>
-    {% else %}
+    <form id="commentForm" name=commentForm" action="{% url 'post_comment' post.slug %}" method="post">
+        {{ form.body }}
+        <input type="hidden" id="parent" name="parent">
+        {% csrf_token %}
+        <p><input class="btn btn-primary mt-3 mb-3" type="submit" value="Написать"></p>
+    </form>
+{% else %}
     <p class="card-body mt-3"><a href="{% url 'login' %}">Авторизуйтесь</a> чтобы оставлять комментарии</p>
 {% endif %}

@@ -18,5 +18,6 @@ urlpatterns = [
     path('post/<slug:slug>/', views.post_comment, name='post_comment'),
     path('post/del_com/<int:com_id>', views.post_comment_delete, name='post_comment_delete'),
     # path('post/<int:pk>/', views.PostDetailView.as_view(), name='PostDetailView'),
+    path('index-view/', views.IndexView.as_view())
 
 ]

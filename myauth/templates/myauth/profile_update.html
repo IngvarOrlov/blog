@@ -1,20 +1,11 @@
 {% extends 'root.html' %}
-{% load main_tags %}
 {% block title %}
     <title>Профиль {{ user.username }}</title>
 {% endblock title%}
 
 {% block content %}
-    <div class="card-body">
-                    Написано постов: {% total_posts_by_user user.id %}
-                </div>
-    <div class="card-body mb-3">
-                    Написано комментариев: {% total_comments_by_user user.id %}
-                </div>
     
-    <div class="mb-3">
-        <img src="{{ user.profile.avatar.url }} " style="cursor: pointer;"/>
-    </div>
+    
     {% if user_form.errors %}
         <div class="container d-flex align-items-center justify-content-center">
             <div class="alert alert-warning alert-dismissible fade show w-50  d-block" role="alert">
@@ -26,12 +17,19 @@
         </div>
     {% endif %}
     
+    <div class="mb-3">
+        <img class="round_img" src="{{ user.profile.avatar.url }} " style="cursor: pointer;"/>
+    </div>
     <div class="form-content">
         <form method="post" enctype="multipart/form-data" >
             {% csrf_token %}
             <div>
                 <div>
                     <div>
+                         <label>Изменить аватар:</label>
+{#                        {{ profile_form.avatar }}#}
+                        <input type="file" value="Browse" name="avatar" id="id_avatar" />
+                    <hr>
                         <label>Имя:</label>
                         {{ user_form.username }}
                         <hr>
@@ -39,15 +37,11 @@
                         {{ user_form.email }}
                     </div>
                     <hr>
-                    <div><a href="{% url 'password_change' %}">Изменить пароль</a>
+                    <div><a href="{% url 'password_change' %}">Изменить пароль</a></div>
                         <hr>
-                        <label>Изменить аватар:</label>
-{#                        {{ profile_form.avatar }}#}
-                        <input type="file" value="Browse" name="avatar" id="id_avatar" />
-                    </div>
-                    
-                    <hr>
-                    <label>О себе:</label> {{ profile_form.bio }}
+                       
+                    <label>О себе:</label> 
+                    <p>{{ profile_form.bio }}</p>
                 </div>
             </div>
             <br><br>

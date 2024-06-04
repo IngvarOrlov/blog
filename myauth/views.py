@@ -1,15 +1,16 @@
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
-from django.urls.base import reverse_lazy
-from django.views.generic import CreateView
+from django.urls.base import reverse_lazy, reverse
+from django.views.generic import CreateView, View, DetailView, UpdateView
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib import messages
 from django.contrib.auth.views import PasswordChangeView
+from django.db import transaction
 
 from myauth.forms import MyUserCreateForm, LoginForm, UpdateUserForm, UpdateProfileForm
-from myauth.models import User
+from myauth.models import User, Profile
 
 
 # Create your views here.
@@ -61,14 +62,42 @@ def profile(request):
             user_form.save()
             profile_form.save()
             messages.success(request, 'Ваш профиль успешно изменен')
-            return redirect(to='profile')
+            return redirect(to='profile_view', pk=request.user.pk)
     else:
         user_form = UpdateUserForm(instance=request.user)
         profile_form = UpdateProfileForm(instance=request.user.profile)
-    return render(request, 'myauth/profile.html', {'user_form': user_form, 'profile_form': profile_form})
+    return render(request, 'myauth/profile_update.html', {'user_form': user_form, 'profile_form': profile_form})
 
 
 class ChangePasswordView(SuccessMessageMixin, PasswordChangeView):
     template_name = 'myauth/change_password.html'
     success_message = "Вы сменили пароль"
     success_url = reverse_lazy('profile')
+
+class ProfileView(DetailView):
+    model = User
+    template_name = "myauth/profile_detail.html"
+    context_object_name = "profile"
+
+class ProfileUpdate(UpdateView):
+    model = Profile
+    template_name = "myauth/profile_update.html"
+    form_class = UpdateProfileForm
+
+    def get_object(self, queryset=None):
+        return self.request.user.profile
+
+    def form_valid(self, form):
+        context = self.get_context_data()
+        user_form = context['user_form']
+        with transaction.atomic():
+            if all([form.is_valid(), user_form.is_valid()]):
+                user_form.save()
+                form.save()
+            else:
+                context.update({'user_form': user_form})
+                return self.render_to_response(context)
+        return super().form_valid(form)
+    def get_success_url(self):
+        return reverse('profile_view', kwargs={'pk': self.object.user.pk})
+

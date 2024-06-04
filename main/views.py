@@ -5,7 +5,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.forms import model_to_dict
 from django.http import HttpResponseNotFound, HttpResponseNotAllowed, HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
-from django.views.generic import DetailView, ListView
+from django.views.generic import DetailView, ListView, View
 from django.contrib import messages
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.decorators.http import require_POST
@@ -243,3 +243,8 @@ class PostFromCategory(ListView):
         context['category_count'] = self.category_count
         context['category'] = self.category
         return context
+
+class IndexView(View):
+
+    def get(self, request, *args, **kwargs):
+        return render(request, 'root.html')
