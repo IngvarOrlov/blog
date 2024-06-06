@@ -14,6 +14,7 @@ class MyUserCreateForm(UserCreationForm):
                   'password1': 'Пароль',
                   'password2': 'Подтвердите пароль'
                   }
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # print(self.fields)
@@ -39,13 +40,23 @@ class LoginForm(AuthenticationForm):
         fields = ['username', 'password', 'remember_me']
 
 
-
 class UpdateUserForm(forms.ModelForm):
+    w = forms.TextInput(attrs={"class": "form-control mb-1"})
     username = forms.CharField(max_length=100,
                                required=True,
-                               widget=forms.TextInput())
-    email = forms.EmailField(required=True,
-                             widget=forms.TextInput())
+                               label='Ник',
+                               widget=w)
+    first_name = forms.CharField(max_length=50,
+                                 required=False,
+                                 label='Имя',
+                                 widget=w)
+    last_name = forms.CharField(max_length=50,
+                                 required=False,
+                                 label='Фамилия',
+                                 widget=w)
+
+    email = forms.EmailField(required=True, label='E-mail',
+                             widget=w)
 
     class Meta:
         model = User
@@ -53,8 +64,10 @@ class UpdateUserForm(forms.ModelForm):
 
 
 class UpdateProfileForm(forms.ModelForm):
-    avatar = forms.ImageField(widget=forms.FileInput())
-    bio = forms.CharField(widget=forms.Textarea(attrs={'rows': 5}))
+    avatar = forms.ImageField(label='Аватар',
+                              widget=forms.FileInput(attrs={"class": "form-control mb-1"}))
+    bio = forms.CharField(label='О себе',
+                          widget=forms.Textarea(attrs={'rows': 5, "class": "form-control mb-1"}))
 
     class Meta:
         model = Profile

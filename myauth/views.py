@@ -21,7 +21,8 @@ class MyUserCreateView(CreateView):
 
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated:
-            return redirect(to='/')
+            # return redirect(to='/')
+            return redirect(reverse_lazy('profile_view', kwargs={'pk': self.request.user.pk}))
         return super(MyUserCreateView, self).dispatch(request, *args, **kwargs)
 
 
@@ -52,40 +53,52 @@ class Logout(SuccessMessageMixin, LogoutView):
         return super().dispatch(request, *args, **kwargs)
 
 
-@login_required
-def profile(request):
-    if request.method == 'POST':
-        user_form = UpdateUserForm(request.POST, instance=request.user)
-        profile_form = UpdateProfileForm(request.POST, request.FILES, instance=request.user.profile)
-
-        if user_form.is_valid() and profile_form.is_valid():
-            user_form.save()
-            profile_form.save()
-            messages.success(request, 'Ваш профиль успешно изменен')
-            return redirect(to='profile_view', pk=request.user.pk)
-    else:
-        user_form = UpdateUserForm(instance=request.user)
-        profile_form = UpdateProfileForm(instance=request.user.profile)
-    return render(request, 'myauth/profile_update.html', {'user_form': user_form, 'profile_form': profile_form})
+# @login_required
+# def profile(request):
+#     if request.method == 'POST':
+#         user_form = UpdateUserForm(request.POST, instance=request.user)
+#         profile_form = UpdateProfileForm(request.POST, request.FILES, instance=request.user.profile)
+#
+#         if user_form.is_valid() and profile_form.is_valid():
+#             user_form.save()
+#             profile_form.save()
+#             messages.success(request, 'Ваш профиль успешно изменен')
+#             return redirect(to='profile_view', pk=request.user.pk)
+#     else:
+#         user_form = UpdateUserForm(instance=request.user)
+#         profile_form = UpdateProfileForm(instance=request.user.profile)
+#     return render(request, 'myauth/profile_update.html', {'user_form': user_form, 'profile_form': profile_form})
 
 
 class ChangePasswordView(SuccessMessageMixin, PasswordChangeView):
     template_name = 'myauth/change_password.html'
     success_message = "Вы сменили пароль"
-    success_url = reverse_lazy('profile')
+    def get_success_url(self):
+        return reverse_lazy('profile_view', kwargs={'pk': self.request.user.pk})
+
 
 class ProfileView(DetailView):
     model = User
     template_name = "myauth/profile_detail.html"
     context_object_name = "profile"
 
+
+
 class ProfileUpdate(UpdateView):
     model = Profile
-    template_name = "myauth/profile_update.html"
+    template_name = "myauth/prof_update.html"
     form_class = UpdateProfileForm
 
     def get_object(self, queryset=None):
         return self.request.user.profile
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if self.request.POST:
+            context['user_form'] = UpdateUserForm(self.request.POST, instance=self.request.user)
+        else:
+            context['user_form'] = UpdateUserForm(instance=self.request.user)
+        return context
 
     def form_valid(self, form):
         context = self.get_context_data()
@@ -94,10 +107,12 @@ class ProfileUpdate(UpdateView):
             if all([form.is_valid(), user_form.is_valid()]):
                 user_form.save()
                 form.save()
+                messages.success(self.request, 'Ваш профиль успешно изменен')
             else:
                 context.update({'user_form': user_form})
                 return self.render_to_response(context)
         return super().form_valid(form)
     def get_success_url(self):
-        return reverse('profile_view', kwargs={'pk': self.object.user.pk})
+        return reverse_lazy('profile_view', kwargs={'pk': self.object.user.pk})
+
 
