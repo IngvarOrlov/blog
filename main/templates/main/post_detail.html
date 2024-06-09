@@ -15,7 +15,8 @@
             </div>
             <div class="col-8">
                 <h4 class="fw-bolder">{{ post.title }}</h4>
-                <p class="text-muted fst-italic mb-2 text-end">By {{ post.author }}</p>
+                <p class="text-muted fst-italic mb-2 text-end">By 
+                    <a href="{{ post.author.profile.get_absolute_url }}">{{ post.author }}</a></p>
                 <p class="date text-end">опубликовано {{ post.created_at }}</p>
             </div>
             <hr>

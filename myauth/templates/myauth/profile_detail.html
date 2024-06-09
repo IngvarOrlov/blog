@@ -34,11 +34,11 @@
 
                 </div>
             </div>
-            {% if request.user.id == profile.id%}
+            {% if request.user.id == profile.id %}
                 <a href="{% url 'profile_edit' %}" class="btn btn-sm btn-outline-primary">Редактировать
-                    профиль</a> {% endif %}
-                          <a class="btn btn-sm btn-outline-primary" href="{% url 'password_change' %}">Изменить пароль</a>
-
+                    профиль</a>
+                <a class="btn btn-sm btn-outline-primary" href="{% url 'password_change' %}">Изменить пароль</a>
+            {% endif %}
         </div>
     </div>
 

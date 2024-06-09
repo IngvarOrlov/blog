@@ -83,13 +83,13 @@ class ProfileView(DetailView):
     context_object_name = "profile"
 
 
-
 class ProfileUpdate(UpdateView):
     model = Profile
     template_name = "myauth/prof_update.html"
     form_class = UpdateProfileForm
 
     def get_object(self, queryset=None):
+
         return self.request.user.profile
 
     def get_context_data(self, **kwargs):

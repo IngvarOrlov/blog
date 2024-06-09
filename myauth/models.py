@@ -3,6 +3,8 @@ from PIL import Image
 
 # Create your models here.
 from django.contrib.auth.models import AbstractUser
+from django.urls.base import reverse
+
 
 class User(AbstractUser):
     email = models.EmailField("email address", blank=True, unique=True)
@@ -33,3 +35,6 @@ class Profile(models.Model):
             new_img = (120, 120)
             img.thumbnail(new_img)
             img.save(self.avatar.path)
+
+    def get_absolute_url(self):
+        return reverse("profile_view", kwargs={'pk': self.pk})

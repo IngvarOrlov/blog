@@ -221,6 +221,24 @@ def posts_search(request):
                    'object_list': results})
 
 
+class PostSearch(ListView):
+    template_name = 'main/search.html'
+    def get_queryset(self):
+        query = self.request.GET['query']
+        queryset = Post.objects.select_related("author", "category").prefetch_related("tags").filter(status='PB').annotate(
+                similarity=TrigramSimilarity('title', query)).filter(similarity__gt=0.1).order_by('-similarity')
+        if not queryset:
+            search_vector = SearchVector('title', weight='A') + SearchVector('body', weight='B')
+            search_query = SearchQuery(query)
+            queryset = Post.objects.filter(status='PB').annotate(
+                rank=SearchRank(search_vector, search_query)).filter(rank__gte=0.3).order_by('-rank')
+
+        return queryset
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data()
+        context['query']=self.request.GET['query']
+        return context
+
 class PostFromCategory(ListView):
     template_name = 'main/post_list_category.html'
     context_object_name = 'posts'
@@ -244,7 +262,3 @@ class PostFromCategory(ListView):
         context['category'] = self.category
         return context
 
-class IndexView(View):
-
-    def get(self, request, *args, **kwargs):
-        return render(request, 'root.html')

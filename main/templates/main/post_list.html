@@ -36,7 +36,8 @@
                         {% endfor %}
                     </p>
                     <div class="text-muted fst-italic mb-2">
-                        Опубликовано {{ post.publish }} by {{ post.author }} в категории
+                        Опубликовано {{ post.publish }} by <a href="{{ post.author.profile.get_absolute_url }}">
+                        {{ post.author }}</a> в категории
                         <a href="{{ post.category.get_absolute_url }}">{{ post.category }}</a>
                     </div>
                 </div>
