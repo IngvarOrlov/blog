@@ -89,7 +89,6 @@ class ProfileUpdate(UpdateView):
     form_class = UpdateProfileForm
 
     def get_object(self, queryset=None):
-
         return self.request.user.profile
 
     def get_context_data(self, **kwargs):
@@ -115,4 +114,9 @@ class ProfileUpdate(UpdateView):
     def get_success_url(self):
         return reverse_lazy('profile_view', kwargs={'pk': self.object.user.pk})
 
-
+class CreateProfileView(CreateView):
+    model = User
+    form_class = MyUserCreateForm
+    template_name = 'create_profile.html'
+    def get_success_url(self):
+        return reverse_lazy("user_profile", kwargs={"id": self.object.id})

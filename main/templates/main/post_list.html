@@ -5,10 +5,10 @@
 {% endblock %}
 {% block content %}
 
-    {% if tag %}
-        <h3>Поиск по тэгу "{{ tag.name }}"</h3>
+    {% if info %}
+        <p class="fst-italic mb-4">{{ info | safe }}</p>
     {% endif %}
-
+    
     {% for post in object_list %}
 
 

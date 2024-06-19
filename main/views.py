@@ -21,6 +21,7 @@ from .slug import make_unique_slug
 # Create your views here.
 
 def posts(request, tag_slug=None):
+    context = {}
     post_list = Post.objects.select_related("author", "category").prefetch_related("tags").filter(status='PB')
     tag = None
     title = "Blog"
@@ -28,6 +29,7 @@ def posts(request, tag_slug=None):
         tag = get_object_or_404(Tag, slug=tag_slug)
         post_list = post_list.filter(tags__in=[tag])
         title = "Записи с тэгом " + tag.__str__()
+        context['info'] = f"Поиск по тэгу <b>{tag}</b>"
 
     paginator = Paginator(post_list, 4)
     page_number = request.GET.get('page', 1)
@@ -40,7 +42,9 @@ def posts(request, tag_slug=None):
         posts = paginator.page(paginator.num_pages)
     except PageNotAnInteger:
         posts = paginator.page(1)
-    html = render(request, 'main/post_list.html', {"object_list": posts, 'tag': tag, 'title': title})
+    context['object_list'] = posts
+    context['title'] = title
+    html = render(request, 'main/post_list.html', context=context)
     html.set_cookie('back_page', page_number)
     if request.COOKIES.get('redirect'):
         html.delete_cookie('redirect')
@@ -182,6 +186,7 @@ def post_comment(request, slug):
                   'main/post_detail.html',
                   {'post': post, 'form': form, 'comments': comments})
 
+
 @login_required
 def post_comment_delete(request, com_id):
     try:
@@ -195,6 +200,7 @@ def post_comment_delete(request, com_id):
     messages.success(request, 'Комментарий удален')
     return redirect('showpost', slug=post.slug)
 
+
 def posts_search(request):
     form = SearchForm()
     query = None
@@ -205,7 +211,8 @@ def posts_search(request):
         if form.is_valid():
             query = form.cleaned_data['query']
 
-            results = Post.objects.select_related("author", "category").prefetch_related("tags").filter(status='PB').annotate(
+            results = Post.objects.select_related("author", "category").prefetch_related("tags").filter(
+                status='PB').annotate(
                 similarity=TrigramSimilarity('title', query),
             ).filter(similarity__gt=0.1).order_by('-similarity')
             if not results:
@@ -215,18 +222,20 @@ def posts_search(request):
                     rank=SearchRank(search_vector, search_query)).filter(rank__gte=0.3).order_by('-rank')
 
     return render(request,
-                  'main/search.html',
+                  'main/post_list.html',
                   {'form': form,
                    'query': query,
                    'object_list': results})
 
 
 class PostSearch(ListView):
-    template_name = 'main/search.html'
+    template_name = 'main/post_list.html'
+
     def get_queryset(self):
         query = self.request.GET['query']
-        queryset = Post.objects.select_related("author", "category").prefetch_related("tags").filter(status='PB').annotate(
-                similarity=TrigramSimilarity('title', query)).filter(similarity__gt=0.1).order_by('-similarity')
+        queryset = Post.objects.select_related("author", "category").prefetch_related("tags").filter(
+            status='PB').annotate(
+            similarity=TrigramSimilarity('title', query)).filter(similarity__gt=0.1).order_by('-similarity')
         if not queryset:
             search_vector = SearchVector('title', weight='A') + SearchVector('body', weight='B')
             search_query = SearchQuery(query)
@@ -234,14 +243,20 @@ class PostSearch(ListView):
                 rank=SearchRank(search_vector, search_query)).filter(rank__gte=0.3).order_by('-rank')
 
         return queryset
+
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data()
-        context['query']=self.request.GET['query']
+        context['query'] = self.request.GET['query']
+        if self.object_list.count() == 0:
+            context['info'] = f'По запросу <b>{context["query"]}</b> ничего не нашлось :('
+        else:
+            context['info'] = f'По запросу <b>{context["query"]}</b> ' + (f"найдено {self.object_list.count()} результатов"
+             if self.object_list.count() > 1 else f"найден 1 результат")
         return context
 
+
 class PostFromCategory(ListView):
-    template_name = 'main/post_list_category.html'
-    context_object_name = 'posts'
+    template_name = 'main/post_list.html'
     category = None
     paginate_by = 4
 
@@ -249,16 +264,21 @@ class PostFromCategory(ListView):
         self.category = Category.objects.get(slug=self.kwargs['slug'])
         queryset = Post.objects.filter(category__slug=self.category.slug)
         children_count = Post.objects.filter(category__parent=self.category).count()
-        self.category_count = queryset.count()+children_count
+        self.category_count = queryset.count() + children_count
         if not queryset:
             sub_cat = Category.objects.filter(parent=self.category)
             queryset = Post.objects.filter(category__in=sub_cat)
+        self.total_count = queryset.count()
         return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = f'Записи из категории: {self.category.title}'
+        if self.category_count > 0:
+            context['info'] = f'В категории <b>{self.category}</b> ' + (f"найдено {self.category_count} результатов"
+                                                                        if self.category_count > 1 else f"найден {self.category_count} результат")
+        else:
+            context['info'] = f'В категории "{self.category}" ничего не найдено'
         context['category_count'] = self.category_count
         context['category'] = self.category
         return context
-
