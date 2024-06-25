@@ -8,7 +8,6 @@ from django_ckeditor_5.fields import CKEditor5Field
 from ckeditor_uploader.fields import RichTextUploadingField
 from ckeditor.fields import RichTextField
 
-
 from myauth.models import User
 
 
@@ -24,10 +23,6 @@ class Post(models.Model):
         ('PB', 'Опубликовано'),
         ('DF', 'Черновик')
     )
-
-    def get_absolute_url(self):
-        return reverse('showpost',
-                       args=[self.slug])
 
     slug = models.SlugField(max_length=250, unique=True)
     publish = models.DateTimeField(default=timezone.now)
@@ -45,13 +40,17 @@ class Post(models.Model):
                               null=True,
                               blank=True)
 
-    def __str__(self):
-        return self.title
-
     class Meta:
         ordering = ('-created_at',)
         verbose_name = 'Пост'
         verbose_name_plural = 'Посты'
+
+    def get_absolute_url(self):
+        return reverse('showpost',
+                       args=[self.slug])
+
+    def __str__(self):
+        return self.title
 
 
 class Comment(MPTTModel):
@@ -130,7 +129,6 @@ class Category(MPTTModel):
             new_img = (120, 120)
             img.thumbnail(new_img)
             img.save(self.avatar.path)
-
 
     def __str__(self):
         return self.title

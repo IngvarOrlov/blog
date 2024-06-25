@@ -3,7 +3,8 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls.base import reverse_lazy, reverse
 from django.views.generic import CreateView, View, DetailView, UpdateView
-from django.contrib.auth.views import LoginView, LogoutView
+from django.views.generic.edit import FormView
+from django.contrib.auth.views import LoginView, LogoutView, PasswordResetView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib import messages
 from django.contrib.auth.views import PasswordChangeView
@@ -29,6 +30,7 @@ class MyUserCreateView(CreateView):
 class Login(SuccessMessageMixin, LoginView):
     form_class = LoginForm
     success_message = "Вы вошли как %(username)s"
+    template_name = 'myauth/login.html'
 
     def form_valid(self, form):
         remember_me = form.cleaned_data.get('remember_me')
@@ -120,3 +122,6 @@ class CreateProfileView(CreateView):
     template_name = 'create_profile.html'
     def get_success_url(self):
         return reverse_lazy("user_profile", kwargs={"id": self.object.id})
+
+class ResetPasswordView(SuccessMessageMixin, PasswordResetView):
+    template_name = 'myauth/reset_password.html'

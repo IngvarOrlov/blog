@@ -29,9 +29,11 @@ class MyUserCreateForm(UserCreationForm):
 class LoginForm(AuthenticationForm):
     username = forms.CharField(max_length=100,
                                required=True,
+                               label='Имя',
                                widget=forms.TextInput(attrs={'placeholder': 'Ваше имя'}))
     password = forms.CharField(max_length=50,
                                required=True,
+                               label='Пароль',
                                widget=forms.PasswordInput(attrs={'placeholder': 'Ваш пароль'}))
     remember_me = forms.BooleanField(required=False)
 
