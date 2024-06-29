@@ -44,6 +44,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.postgres',
     'social_django',
+    'django.contrib.sites',
+    'django.contrib.sitemaps',
     'mptt',
     'myauth',
     'main',
@@ -175,6 +177,17 @@ SECRET_KEY = str(os.getenv('SECRET_KEY'))
 # social auth configs for google
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = str(os.getenv('GOOGLE_KEY'))
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = str(os.getenv('GOOGLE_SECRET'))
+
+
+# Конфигурация сервера электронной почты
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'kampaiski@gmail.com'
+EMAIL_HOST_PASSWORD = 'quvy bmmy vxff obde '
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
+SITE_ID = 1
 
 customColorPalette = [
 
