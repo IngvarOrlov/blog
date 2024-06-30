@@ -22,7 +22,7 @@ from .slug import make_unique_slug
 
 def posts(request, tag_slug=None):
     context = {}
-    post_list = Post.objects.select_related("author", "category").prefetch_related("tags").filter(status='PB')
+    post_list = Post.published.select_related("author", "category").prefetch_related("tags").filter(status='PB')
     tag = None
     title = "Blog"
     if tag_slug:
@@ -262,7 +262,7 @@ class PostFromCategory(ListView):
 
     def get_queryset(self):
         self.category = Category.objects.get(slug=self.kwargs['slug'])
-        queryset = Post.objects.filter(category__slug=self.category.slug)
+        queryset = Post.published.filter(category__slug=self.category.slug)
         children_count = Post.objects.filter(category__parent=self.category).count()
         self.category_count = queryset.count() + children_count
         if not queryset:

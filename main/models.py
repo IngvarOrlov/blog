@@ -10,6 +10,9 @@ from ckeditor.fields import RichTextField
 
 from myauth.models import User
 
+class PublishedManager(models.Manager):
+    def get_queryset(self):
+        return Post.objects.filter(status='PB')
 
 class Post(models.Model):
     """
@@ -39,6 +42,8 @@ class Post(models.Model):
                               verbose_name='Категория',
                               null=True,
                               blank=True)
+    objects = models.Manager()
+    published = PublishedManager()
 
     class Meta:
         ordering = ('-created_at',)
