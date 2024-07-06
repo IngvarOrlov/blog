@@ -66,7 +66,7 @@
 
         <div class="card-body container row">
             <div class="col-auto">
-                <a href="{% url 'profile_view' node.name.pk %}"><img class="round_img" height="50" width="50"
+                <a href="{% url 'myauth:profile_view' node.name.pk %}"><img class="round_img" height="50" width="50"
                                                                      style="border-radius: 50%; box-shadow: 0 0 0 3px #586e89; object-fit: cover"
                                                                      src="{{ node.name.profile.avatar.url }}"></a>
             </div>
@@ -104,5 +104,5 @@
         <p><input class="btn btn-primary mt-3 mb-3" type="submit" value="Написать"></p>
     </form>
 {% else %}
-    <p class="card-body mt-3"><a href="{% url 'login' %}">Авторизуйтесь</a> чтобы оставлять комментарии</p>
+    <p class="card-body mt-3"><a href="{% url 'myauth:login' %}">Авторизуйтесь</a> чтобы оставлять комментарии</p>
 {% endif %}

@@ -17,17 +17,22 @@ Including another URLconf
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include, re_path
-
+from django.contrib.sitemaps.views import sitemap
 from blog import settings
+from main.sitemaps import PostSitemap
 
+sitemaps = {
+    'posts': PostSitemap,
+}
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('main.urls')),
-    path('', include('myauth.urls')),
-    # path("accounts/", include("django.contrib.auth.urls")),
+    path('', include('myauth.urls', namespace='myauth')),
+    path('acc/', include('django.contrib.auth.urls')),
     path('ckeditor5/', include('django_ckeditor_5.urls')),
     path('ckeditor/', include('ckeditor_uploader.urls')),
+    path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
     re_path(r'^oauth/', include('social_django.urls', namespace='social')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

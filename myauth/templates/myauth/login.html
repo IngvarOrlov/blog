@@ -11,7 +11,7 @@
     </form>
     <br>
     <div class="mb-5">
-        <p class="">Вы можете <a href="{% url 'register' %}">Зарегестрироваться</a> 
+        <p class="">Вы можете <a href="{% url 'myauth:register' %}">Зарегестрироваться</a> 
        или войти через <a href="{% url 'social:begin' 'google-oauth2' %}"><img width="50" src="/media/google.jpg"></a>
     </p>
         <p><a href="{% url 'password_reset' %}">Забыли пароль?</a></p>

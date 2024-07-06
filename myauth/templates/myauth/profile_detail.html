@@ -35,7 +35,7 @@
                 </div>
             </div>
             {% if request.user.id == profile.id %}
-                <a href="{% url 'profile_edit' %}" class="btn btn-sm btn-outline-primary">Редактировать
+                <a href="{% url 'myauth:profile_edit' %}" class="btn btn-sm btn-outline-primary">Редактировать
                     профиль</a>
                 <a class="btn btn-sm btn-outline-primary" href="{% url 'password_change' %}">Изменить пароль</a>
             {% endif %}

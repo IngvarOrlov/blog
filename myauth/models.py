@@ -37,4 +37,4 @@ class Profile(models.Model):
             img.save(self.avatar.path)
 
     def get_absolute_url(self):
-        return reverse("profile_view", kwargs={'pk': self.pk})
+        return reverse("myauth:profile_view", kwargs={'pk': self.pk})

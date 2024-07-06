@@ -21,6 +21,12 @@ from .slug import make_unique_slug
 # Create your views here.
 
 def posts(request, tag_slug=None):
+    from django.core.mail import send_mail
+    send_mail('Django mail',
+              'This e-mail was sent with Django.',
+              'kampaiski@gmail.com',
+              ['kampaiski@gmail.com'],
+              fail_silently=False)
     context = {}
     post_list = Post.published.select_related("author", "category").prefetch_related("tags").filter(status='PB')
     tag = None

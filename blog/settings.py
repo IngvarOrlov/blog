@@ -181,6 +181,7 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = str(os.getenv('GOOGLE_SECRET'))
 
 # Конфигурация сервера электронной почты
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_HOST_USER = 'kampaiski@gmail.com'
 EMAIL_HOST_PASSWORD = 'quvy bmmy vxff obde '

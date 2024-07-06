@@ -1,7 +1,9 @@
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import PasswordResetForm
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls.base import reverse_lazy, reverse
+from django.utils.decorators import method_decorator
 from django.views.generic import CreateView, View, DetailView, UpdateView
 from django.views.generic.edit import FormView
 from django.contrib.auth.views import LoginView, LogoutView, PasswordResetView
@@ -114,7 +116,7 @@ class ProfileUpdate(UpdateView):
                 return self.render_to_response(context)
         return super().form_valid(form)
     def get_success_url(self):
-        return reverse_lazy('profile_view', kwargs={'pk': self.object.user.pk})
+        return reverse_lazy('myauth:profile_view', kwargs={'pk': self.object.user.pk})
 
 class CreateProfileView(CreateView):
     model = User
@@ -124,4 +126,16 @@ class CreateProfileView(CreateView):
         return reverse_lazy("user_profile", kwargs={"id": self.object.id})
 
 class ResetPasswordView(SuccessMessageMixin, PasswordResetView):
-    template_name = 'myauth/reset_password.html'
+    email_template_name = "registration/password_reset_email.html"
+    extra_email_context = None
+    form_class = PasswordResetForm
+    from_email = None
+    html_email_template_name = None
+    subject_template_name = "registration/password_reset_subject.txt"
+    success_url = reverse_lazy("password_reset_done")
+    template_name = "registration/password_reset_form.html"
+    title = "Восстановление пароля"
+    # token_generator = default_token_generator
+
+
+
