@@ -137,3 +137,16 @@ class Category(MPTTModel):
 
     def __str__(self):
         return self.title
+
+
+class Rating(models.Model):
+    user = models.ForeignKey(to=User, on_delete=models.CASCADE, verbose_name='Пользователь')
+    post = models.ForeignKey(to=Post, on_delete=models.CASCADE, related_name='ratings', verbose_name='Запись')
+    value = models.IntegerField(choices=[(-1, 'Не нравится'), (1, 'Нравится')])
+    timestamp = models.DateTimeField(auto_now_add=True)
+    def __str__(self):
+        return f'User: {self.user}, to post {self.post}, set {self.value}'
+    class Meta:
+        verbose_name='Рейтинг'
+        verbose_name_plural='Рейтинги'
+        ordering = ['-timestamp']
